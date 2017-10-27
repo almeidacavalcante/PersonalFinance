@@ -41,9 +41,6 @@ class HeaderCell: UICollectionViewCell {
     }
     
     func handleCurrencyValueChange(){
-        
-        print("CURRENCY: ----------> ", currencyField.text)
-        print("AMOUNT: ----------> ", currencyField.text?.currencyInputFormatting())
         if let amountString = currencyField.text?.currencyInputFormatting() {
             currencyField.text = amountString
         }

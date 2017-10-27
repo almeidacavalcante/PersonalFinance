@@ -61,6 +61,12 @@ extension UIColor {
         }
     }
     
+    open class var lightYellow4 : UIColor {
+        get {
+            return UIColor.rgb(red: 250, green: 240, blue: 214)
+        }
+    }
+    
     
     open class var salmao : UIColor {
         get{

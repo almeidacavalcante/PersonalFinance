@@ -20,6 +20,7 @@
 		D59755031F9E87C6001BBE8B /* CustomImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59755021F9E87C6001BBE8B /* CustomImageView.swift */; };
 		D59755051F9E8946001BBE8B /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59755041F9E8946001BBE8B /* CustomButton.swift */; };
 		D59755071F9ECE2A001BBE8B /* SignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59755061F9ECE2A001BBE8B /* SignInController.swift */; };
+		D5F017FD1FA3B4A100A2EFA3 /* AddCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F017FC1FA3B4A100A2EFA3 /* AddCategoryController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		D59755041F9E8946001BBE8B /* CustomButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		D59755061F9ECE2A001BBE8B /* SignInController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInController.swift; sourceTree = "<group>"; };
 		D597550A1F9ED200001BBE8B /* PersonalFinance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PersonalFinance.entitlements; sourceTree = "<group>"; };
+		D5F017FC1FA3B4A100A2EFA3 /* AddCategoryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCategoryController.swift; sourceTree = "<group>"; };
 		F3D209C5260E4608C9A4655B /* Pods-PersonalFinance.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PersonalFinance.release.xcconfig"; path = "Pods/Target Support Files/Pods-PersonalFinance/Pods-PersonalFinance.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -139,6 +141,7 @@
 			children = (
 				D59754E01F98D340001BBE8B /* HomeController.swift */,
 				D59755061F9ECE2A001BBE8B /* SignInController.swift */,
+				D5F017FC1FA3B4A100A2EFA3 /* AddCategoryController.swift */,
 			);
 			name = controller;
 			sourceTree = "<group>";
@@ -281,6 +284,7 @@
 				D59754F51F98E943001BBE8B /* Extensions.swift in Sources */,
 				D59754F71F9A32DE001BBE8B /* CategoryCell.swift in Sources */,
 				D59755011F9E3E0D001BBE8B /* Category.swift in Sources */,
+				D5F017FD1FA3B4A100A2EFA3 /* AddCategoryController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

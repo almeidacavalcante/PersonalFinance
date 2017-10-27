@@ -236,13 +236,14 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     
+    var lastNote = ""
     
     func handleSend(){
         print("Handle Send.")
-
         
-        
-        
+        if let text = noteTextField.text {
+            lastNote = text
+        }
         noteTextField.text = ""
         noteTextField.removeFromSuperview()
         animateOutNoteTextField()
@@ -389,9 +390,11 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         let ref = userPostRef.childByAutoId()
         let categoryId = selectedCategoryCell?.category?.assetName
         
+        
         let values = ["value": value,
-                      "categoryId": categoryId
-                        ,"creationDate": Date().timeIntervalSince1970] as [String : Any]
+                      "categoryId": categoryId,
+                      "note" : lastNote,
+                      "creationDate": Date().timeIntervalSince1970] as [String : Any]
         
         ref.updateChildValues(values) { (err, ref) in
             if let err = err {
@@ -404,13 +407,20 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     //MARK: NAVIGATION BAR ITEMS
     lazy var addCategoryBarButton : UIBarButtonItem = {
-            let barButton = UIBarButtonItem(image: #imageLiteral(resourceName: "plus").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleLogout))
+            let barButton = UIBarButtonItem(image: #imageLiteral(resourceName: "plus").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleAddCategory))
         
         return barButton
     }()
     
+    var addCategoryController : AddCategoryController?
     func handleAddCategory(){
-        print("handleAddCategory")
+        guard let controller = addCategoryController else {
+            let layout = UICollectionViewFlowLayout()
+            self.addCategoryController = AddCategoryController(collectionViewLayout: layout)
+            navigationController?.pushViewController(self.addCategoryController!, animated: true)
+            return
+        }
+        navigationController?.pushViewController(controller, animated: true)
     }
     
     func setupNavigationBar(){
@@ -527,7 +537,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         setupAddedNote()
     
-        return header
+        return self.header!
     }
     
     

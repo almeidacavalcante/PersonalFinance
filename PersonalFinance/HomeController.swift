@@ -65,9 +65,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         view.backgroundColor = UIColor.rgb(red: 134, green: 172, blue: 151)
         
         self.handleLogin()
-        
-
-//        fetchCategories()
         setupCollectionView()
         setupNavigationBar()
         setupContainerView()
@@ -121,15 +118,17 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         animateNoteTextField()
     }
     
-    let noteTextField : UITextField = {
-        let tf = UITextField()
-        tf.font = UIFont.boldSystemFont(ofSize: 14)
+    let noteTextField : TextField = {
+        let tf = TextField()
+        tf.font = UIFont.boldSystemFont(ofSize: 16)
         tf.textAlignment = .left
-        tf.contentVerticalAlignment = .top
+        tf.contentVerticalAlignment = .center
         tf.placeholder = "Enter some note"
         tf.textColor = UIColor(white: 0, alpha: 0.3)
         return tf
     }()
+    
+    
     
     var heightConstraint : NSLayoutConstraint?
     var trailingConstraint : NSLayoutConstraint?
@@ -140,6 +139,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     func animateNoteTextField(){
         UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
             self.trailingConstraint = NSLayoutConstraint(item: self.view, attribute: .trailing, relatedBy: .equal, toItem: self.horizontalOverlay, attribute: .trailing, multiplier: 1, constant: 0)
+            
             
             self.view.addConstraint(self.trailingConstraint!)
             
@@ -188,8 +188,23 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
                 self.separatorView?.removeFromSuperview()
                 self.view.removeConstraint(self.heightConstraint!)
                 self.noteButton.isEnabled = true
+                self.showsAddedNote()
                 print("OUT---------------")
             }
+        }
+    }
+    
+    let imageView = UIImageView(image: #imageLiteral(resourceName: "info").withRenderingMode(.alwaysOriginal))
+    
+    func showsAddedNote(){
+        UIView.animate(withDuration: 0.5) {
+            self.imageView.alpha = 1
+        }
+    }
+    
+    func hidesAddedNote(){
+        UIView.animate(withDuration: 0.5) {
+            self.imageView.alpha = 0
         }
     }
 
@@ -204,7 +219,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     func setupNoteTextField(){
         view.addSubview(noteTextField)
-        noteTextField.anchor(top: header?.bottomAnchor, left: view.leftAnchor, botton: nil, right: nil, paddingTop: 8, paddingLeft: 8, paddingBottom: 8, paddingRight: 8, width: view.frame.width-76, height: 40-16)
+        noteTextField.anchor(top: header?.bottomAnchor, left: view.leftAnchor, botton: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: view.frame.width-76, height: 40)
+        
+        noteTextField.becomeFirstResponder()
         
         separatorView = UIView()
         separatorView?.backgroundColor = .salmao
@@ -236,7 +253,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     func drawACircle() -> CAShapeLayer{
         let circlePath = UIBezierPath(arcCenter: CGPoint(x: 0,y: 0), radius: CGFloat(25), startAngle: CGFloat(0), endAngle:CGFloat(Double.pi * 2), clockwise: true)
         
-        let shapeLayer = CAShapeLayer()
+        let shapeLayer = CAShapeLayer() 
         shapeLayer.path = circlePath.cgPath
         
         //change the fill color
@@ -307,6 +324,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     func resetScreen(){
         header?.currencyField.text = "$0.00"
         resetCategoryCellColor()
+        hidesAddedNote()
         selectedCategoryCell = nil
         setupTitleLabelTransition(title: "")
     }
@@ -427,7 +445,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     func setupCollectionView(){
-        
+        self.hideKeyboardWhenTappedAround()
         self.collectionView!.alwaysBounceVertical = true
         collectionView?.delegate = self
         
@@ -437,6 +455,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         collectionView?.register(HeaderCell.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
         
         collectionView?.anchor(top: view.topAnchor, left: view.leftAnchor, botton: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 100, paddingRight: 0, width: 0, height: 0)
+        
+
         
         
     }
@@ -498,13 +518,23 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as! HeaderCell
+        
+        
 
-        header.backgroundColor = UIColor.red
         header.currencyField.delegate = self
         
         self.header = header
         
+        setupAddedNote()
+    
         return header
+    }
+    
+    
+    func setupAddedNote(){
+        view.addSubview(imageView)
+        imageView.anchor(top: self.header?.topAnchor, left: self.header?.leftAnchor, botton: nil, right: nil, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        imageView.alpha = 0
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -523,6 +553,14 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     let blackView = UIView()
     func setupBlackView(){
+        let label = UILabel()
+        label.text = "Dismiss keyboard"
+        label.textAlignment = .center
+        label.font = UIFont.boldSystemFont(ofSize: 16)
+        label.textColor = .white
+        blackView.addSubview(label)
+        label.anchor(top: blackView.topAnchor, left: blackView.leftAnchor, botton: nil, right: blackView.rightAnchor, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        
         let gestureRec = UITapGestureRecognizer(target: self, action: #selector(didFinishEditing))
         blackView.addGestureRecognizer(gestureRec)
     }
@@ -530,8 +568,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     func didFinishEditing(){
         guard let header = self.header else {return}
-        
-        header.didFinishEditing()
+        self.dismissKeyboard()
+//        header.didFinishEditing()
     }
     
     

@@ -17,7 +17,22 @@
 import UIKit
 import FirebaseDatabase
 
-
+class TextField: UITextField {
+    
+    let padding = UIEdgeInsets(top: 8, left: 5, bottom: 8, right: 5);
+    
+    override func textRect(forBounds bounds: CGRect) -> CGRect {
+        return UIEdgeInsetsInsetRect(bounds, padding)
+    }
+    
+    override func placeholderRect(forBounds bounds: CGRect) -> CGRect {
+        return UIEdgeInsetsInsetRect(bounds, padding)
+    }
+    
+    override func editingRect(forBounds bounds: CGRect) -> CGRect {
+        return UIEdgeInsetsInsetRect(bounds, padding)
+    }
+}
 
 extension UIView {
     

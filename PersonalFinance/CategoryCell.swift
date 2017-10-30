@@ -10,7 +10,7 @@ import UIKit
 
 protocol CategoryCellDelegate {
     func didSelectCategory(cell: CategoryCell)
-}
+} 
 
 class CategoryCell: UICollectionViewCell {
     
@@ -32,6 +32,12 @@ class CategoryCell: UICollectionViewCell {
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didSelectCategory))
         button.addGestureRecognizer(gestureRecognizer)
         
+        self.resetColor()
+        
+    }
+    
+    func resetColor(){
+        self.backgroundColor = UIColor.currentColorScheme[4]
     }
     
     func didSelectCategory(){

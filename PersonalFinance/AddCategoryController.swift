@@ -10,75 +10,95 @@
 
 import UIKit
 
-class AddCategoryController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class AddCategoryController: UICollectionViewController, UICollectionViewDelegateFlowLayout, CategoryCellDelegate {
     
-    let categoryNameTextField : TextField = {
-        let tf = TextField()
-        tf.backgroundColor = .lightYellow4
-        tf.borderStyle = .roundedRect
-        tf.font = UIFont.systemFont(ofSize: 16)
-        tf.textAlignment = .left
-        tf.contentVerticalAlignment = .center
-        
-        return tf
-    }()
-    
-    let categoryNameLabel : UILabel = {
-        let label = UILabel()
-        label.text = "Category Name: "
-        label.font = UIFont.systemFont(ofSize: 16)
-        
-        return label
-    }()
-    
+
     let moreOverlay : UIView = {
         let v = UIView()
-        v.backgroundColor = .lightYellow2
+        v.backgroundColor = UIColor.currentColorScheme[0]
         return v
     }()
 
-    
-    
     let cellId = "cellId"
     let headerId = "headerId"
     
-    var header : UICollectionViewCell?
+    var header : CategoryHeaderCell? {
+        didSet{
+            self.setupDoneButtonOnKeyboard()
+        }
+    }
+    
+    
     
     override func viewDidLoad() {
-        view.backgroundColor = .lightYellow2
-        
+        view.backgroundColor = UIColor.currentColorScheme[2]
+        collectionView?.keyboardDismissMode = .interactive
+        self.hideKeyboardWhenTappedAround()
         setupCollectionView()
         
-        collectionView?.addSubview(categoryNameTextField)
-        collectionView?.addSubview(categoryNameLabel)
+
         
-        categoryNameLabel.anchor(top: collectionView?.topAnchor, left: collectionView?.leftAnchor, botton: nil, right: collectionView?.rightAnchor, paddingTop: 5, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 30)
-        
-        categoryNameTextField.anchor(top: categoryNameLabel.bottomAnchor, left: collectionView?.leftAnchor, botton: nil, right: collectionView?.rightAnchor, paddingTop: 5, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 40)
-        
-//        collectionView?.layoutIfNeeded()
         
     }
     
+    func setupDoneButtonOnKeyboard(){
+        //init toolbar
+        let toolbar:UIToolbar = UIToolbar(frame: CGRect(x: 0, y: 0,  width: self.view.frame.size.width, height: 40))
+        //create left side empty space so that done button set on right side
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneBtn: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneButtonAction))
+        toolbar.setItems([flexSpace, doneBtn, flexSpace], animated: true)
+        toolbar.sizeToFit()
+        
+        //setting toolbar as inputAccessoryView
+        self.header?.categoryNameTextField.inputAccessoryView = toolbar
+    }
+    
+    func doneButtonAction() {
+        self.view.endEditing(true)
+    }
+
     let gradientView : UIView = {
         let view = UIView()
-        view.backgroundColor = .lightYellow2
+        view.backgroundColor = UIColor.currentColorScheme[2]
         view.isUserInteractionEnabled = false
+        
         return view
     }()
     
     func setupCollectionView(){
         
         collectionView?.register(CategoryCell.self, forCellWithReuseIdentifier: cellId)
-        collectionView?.register(UICollectionViewCell.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
+        collectionView?.register(CategoryHeaderCell.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
+        
+        
         
         view.addSubview(gradientView)
         gradientView.anchor(top: nil, left: collectionView?.leftAnchor, botton: collectionView?.bottomAnchor, right: collectionView?.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 100)
-        
-
    
-        collectionView?.backgroundColor = .lightYellow2
+        collectionView?.backgroundColor = UIColor.currentColorScheme[0]
         collectionView?.anchor(top: view.topAnchor, left: view.leftAnchor, botton: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 100, paddingRight: 0, width: 0, height: 0)
+        
+        setupArrow()
+        
+    }
+    var isHighlighted = false
+    func setupArrow(){
+        
+        let arrow = UIImageView(image: #imageLiteral(resourceName: "arrow").withRenderingMode(.alwaysTemplate))
+        arrow.tintColor = UIColor.currentColorScheme[3]
+        view.addSubview(arrow)
+        
+        arrow.translatesAutoresizingMaskIntoConstraints = false
+        
+        arrow.centerXAnchor.constraint(equalTo: gradientView.centerXAnchor).isActive = true
+        arrow.centerYAnchor.constraint(equalTo: gradientView.centerYAnchor).isActive = true
+        
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseInOut, animations: {
+            
+            arrow.tintColor = UIColor.currentColorScheme[10]
+        })
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -110,10 +130,33 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! CategoryCell
+        
+        cell.delegate = self
+        
         cell.button.setImage(#imageLiteral(resourceName: "task").withRenderingMode(.alwaysOriginal), for: .normal)
-        cell.backgroundColor = .lightYellow
+        cell.resetColor()
+        
         return cell
+    }
+    
+    func didSelectCategory(cell: CategoryCell) {
+        resetCategoryCellColor()
+        self.selectedCategoryCell = cell
+        
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 10, options: .curveEaseInOut, animations: {
+            self.selectedCategoryCell?.backgroundColor = UIColor.currentColorScheme[6]
+        })
+    }
+    
+    
+    var selectedCategoryCell : CategoryCell?
+    
+    
+    func resetCategoryCellColor(){
+        guard let cell = selectedCategoryCell else {return}
+        cell.resetColor()
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -132,11 +175,11 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        self.header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as? UICollectionViewCell
+        self.header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as? CategoryHeaderCell
         
         
         
-        header?.backgroundColor = .lightYellow2
+        header?.backgroundColor = UIColor.currentColorScheme[0]
         return header!
     }
     

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B5277D3E627332CD8696808D /* Pods_PersonalFinance.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8BABF7717E6F0B7996BF04E /* Pods_PersonalFinance.framework */; };
+		D55D4B3F1FA4B9E9008A034D /* CategoryHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55D4B3E1FA4B9E9008A034D /* CategoryHeaderCell.swift */; };
 		D59754DF1F98D340001BBE8B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59754DE1F98D340001BBE8B /* AppDelegate.swift */; };
 		D59754E11F98D340001BBE8B /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59754E01F98D340001BBE8B /* HomeController.swift */; };
 		D59754E61F98D340001BBE8B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D59754E51F98D340001BBE8B /* Assets.xcassets */; };
@@ -26,6 +27,7 @@
 /* Begin PBXFileReference section */
 		4E47D166CABD39F148E9B0FC /* Pods-PersonalFinance.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PersonalFinance.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PersonalFinance/Pods-PersonalFinance.debug.xcconfig"; sourceTree = "<group>"; };
 		C8BABF7717E6F0B7996BF04E /* Pods_PersonalFinance.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PersonalFinance.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D55D4B3E1FA4B9E9008A034D /* CategoryHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryHeaderCell.swift; sourceTree = "<group>"; };
 		D59754DB1F98D340001BBE8B /* PersonalFinance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PersonalFinance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D59754DE1F98D340001BBE8B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D59754E01F98D340001BBE8B /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 			children = (
 				D59754F61F9A32DE001BBE8B /* CategoryCell.swift */,
 				D59754F81F9A3EC2001BBE8B /* HeaderCell.swift */,
+				D55D4B3E1FA4B9E9008A034D /* CategoryHeaderCell.swift */,
 			);
 			name = view;
 			sourceTree = "<group>";
@@ -280,6 +283,7 @@
 				D59755071F9ECE2A001BBE8B /* SignInController.swift in Sources */,
 				D59754FD1F9BE3A4001BBE8B /* Colors.swift in Sources */,
 				D59754F91F9A3EC2001BBE8B /* HeaderCell.swift in Sources */,
+				D55D4B3F1FA4B9E9008A034D /* CategoryHeaderCell.swift in Sources */,
 				D59754DF1F98D340001BBE8B /* AppDelegate.swift in Sources */,
 				D59754F51F98E943001BBE8B /* Extensions.swift in Sources */,
 				D59754F71F9A32DE001BBE8B /* CategoryCell.swift in Sources */,

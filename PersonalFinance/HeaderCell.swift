@@ -24,8 +24,8 @@ class HeaderCell: UICollectionViewCell {
         tv.font = UIFont(name: "Arial", size: 48)
         tv.keyboardType = UIKeyboardType.numberPad
         tv.textAlignment = .center
-        tv.backgroundColor = UIColor.lightYellow
-        tv.textColor = UIColor.salmao
+        tv.backgroundColor = UIColor.currentColorScheme[0]
+        tv.textColor = UIColor.white
         tv.text = "$0.00"
         return tv
     }()

@@ -19,7 +19,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     let footerContainer : UIView = {
         let container = UIView()
-        container.backgroundColor = UIColor.rgb(red: 255, green: 247, blue: 192)
+        container.backgroundColor = UIColor.currentColorScheme[2]
         return container
     }()
     
@@ -27,7 +27,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         let button = UIButton(type: .system)
         button.setTitle("INSERIR", for: .normal)
         button.setTitleColor(.black, for: .normal)
-        button.backgroundColor = UIColor.lightYellow
+        button.backgroundColor = UIColor.currentColorScheme[6]
         button.addTarget(self, action: #selector(handleInsert), for: .touchUpInside)
         return button
     }()
@@ -35,7 +35,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     let noteButton : UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "note").original(), for: .normal)
-        button.backgroundColor = UIColor.lightYellow2
+        button.backgroundColor = UIColor.currentColorScheme[7]
         button.addTarget(self, action: #selector(handleNote), for: .touchUpInside)
         return button
     }()
@@ -62,7 +62,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
                             Category(descriptionContent: "Food", assetName: "toast")]
         
         //134,172,151
-        view.backgroundColor = UIColor.rgb(red: 134, green: 172, blue: 151)
+        view.backgroundColor = UIColor.currentColorScheme[3]
         
         self.handleLogin()
         setupCollectionView()
@@ -101,9 +101,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     func showNoteOverlay(){
 
-        horizontalOverlay.backgroundColor = .white
+        horizontalOverlay.backgroundColor = UIColor.currentColorScheme[3]
         
-        view.addSubview(horizontalOverlay)
+        view.addSubview(horizontalOverlay) 
         
         horizontalOverlay.translatesAutoresizingMaskIntoConstraints = false
         
@@ -124,7 +124,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         tf.textAlignment = .left
         tf.contentVerticalAlignment = .center
         tf.placeholder = "Enter some note"
-        tf.textColor = UIColor(white: 0, alpha: 0.3)
+        tf.textColor = UIColor.currentColorScheme[9]
         return tf
     }()
     
@@ -224,7 +224,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         noteTextField.becomeFirstResponder()
         
         separatorView = UIView()
-        separatorView?.backgroundColor = .salmao
+        separatorView?.backgroundColor = UIColor.currentColorScheme[1]
         horizontalOverlay.addSubview(submitButton)
         horizontalOverlay.addSubview(separatorView!)
         
@@ -258,9 +258,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         shapeLayer.path = circlePath.cgPath
         
         //change the fill color
-        shapeLayer.fillColor = UIColor.lightYellow.cgColor
+        shapeLayer.fillColor = UIColor.currentColorScheme[4].cgColor
         //you can change the stroke color
-        shapeLayer.strokeColor = UIColor.lightYellow.cgColor
+        shapeLayer.strokeColor = UIColor.currentColorScheme[3].cgColor
         //you can change the line width
         shapeLayer.lineWidth = 1.0
         return shapeLayer
@@ -273,7 +273,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         let width = CGFloat(50)
         
         circle.layer.cornerRadius = width/2
-        circle.backgroundColor = UIColor.lightYellow3
+        circle.backgroundColor = UIColor.currentColorScheme[5]
         circle.alpha = 0
         circle.frame.origin.x += 25
         circle.frame.origin.y += 25
@@ -281,7 +281,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         view.addSubview(overlay)
         overlay.addSubview(circle)
         
-        overlay.backgroundColor = UIColor.lightYellow
+        overlay.backgroundColor = UIColor.currentColorScheme[6]
         overlay.anchor(top: navigationController?.navigationBar.bottomAnchor, left: view.leftAnchor, botton: footerContainer.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         
         circle.anchor(top: nil, left: nil, botton: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: width, height: width)
@@ -424,9 +424,10 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     func setupNavigationBar(){
-        navigationController?.navigationBar.barTintColor = UIColor.lightYellow
-        setStatusBarBackgroundColor(color: UIColor.lightYellow2)
+        navigationController?.navigationBar.barTintColor = UIColor.currentColorScheme[1]
+        setStatusBarBackgroundColor(color: UIColor.currentColorScheme[2])
         navigationItem.rightBarButtonItem = addCategoryBarButton
+        navigationController?.navigationBar.tintColor = UIColor.currentColorScheme[3]
         
         navigationItem.rightBarButtonItem?.imageInsets.top = 2
         navigationItem.rightBarButtonItem?.imageInsets.bottom = -2
@@ -460,7 +461,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         collectionView?.delegate = self
         
         //134,172,151
-        collectionView?.backgroundColor = UIColor.lightYellow3
+        collectionView?.backgroundColor = UIColor.currentColorScheme[0]
         collectionView?.register(CategoryCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.register(HeaderCell.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
         
@@ -494,7 +495,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         cell.delegate = self
         
         //191,218,175
-        cell.backgroundColor = UIColor.lightYellow2
+//        cell.backgroundColor = UIColor.currentColorScheme[2]
         return cell
     }
     
@@ -516,12 +517,15 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         selectedCategoryCell = cell
         self.setupTitleLabelView()
         self.setupTitleLabelTransition(title: (selectedCategoryCell?.category?.descriptionContent)!)
-        selectedCategoryCell?.backgroundColor = UIColor.salmao
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 10, options: .curveEaseInOut, animations: {
+            self.selectedCategoryCell?.backgroundColor = UIColor.currentColorScheme[6]
+        })
+        
     }
     
     fileprivate func resetCategoryCellColor(){
         guard let cell = selectedCategoryCell else {return}
-        cell.backgroundColor = UIColor.lightYellow2
+        cell.resetColor()
     }
     
     //MARK: HEADER

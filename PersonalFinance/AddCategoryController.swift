@@ -71,8 +71,6 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         collectionView?.register(CategoryCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.register(CategoryHeaderCell.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
         
-        
-        
         view.addSubview(gradientView)
         gradientView.anchor(top: nil, left: collectionView?.leftAnchor, botton: collectionView?.bottomAnchor, right: collectionView?.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 100)
    
@@ -80,23 +78,33 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         collectionView?.anchor(top: view.topAnchor, left: view.leftAnchor, botton: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 100, paddingRight: 0, width: 0, height: 0)
         
         setupArrow()
-        
     }
+    
     var isHighlighted = false
+    var arrow : UIImageView?
+    var centerXConstraint : NSLayoutConstraint?
+    var centerYConstraint : NSLayoutConstraint?
+    
     func setupArrow(){
         
-        let arrow = UIImageView(image: #imageLiteral(resourceName: "arrow").withRenderingMode(.alwaysTemplate))
-        arrow.tintColor = UIColor.currentColorScheme[3]
-        view.addSubview(arrow)
         
-        arrow.translatesAutoresizingMaskIntoConstraints = false
         
-        arrow.centerXAnchor.constraint(equalTo: gradientView.centerXAnchor).isActive = true
-        arrow.centerYAnchor.constraint(equalTo: gradientView.centerYAnchor).isActive = true
+        arrow = UIImageView(image: #imageLiteral(resourceName: "arrow").withRenderingMode(.alwaysTemplate))
+        arrow?.tintColor = UIColor.currentColorScheme[3]
+        view.addSubview(arrow!)
+        
+        arrow?.translatesAutoresizingMaskIntoConstraints = false
+        
+        centerXConstraint = arrow?.centerXAnchor.constraint(equalTo: gradientView.centerXAnchor)
+        centerYConstraint = arrow?.centerYAnchor.constraint(equalTo: gradientView.centerYAnchor)
+        
+        view.addConstraint(centerXConstraint!)
+        view.addConstraint(centerYConstraint!)
         
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseInOut, animations: {
-            
-            arrow.tintColor = UIColor.currentColorScheme[10]
+
+            self.arrow?.tintColor = UIColor.currentColorScheme[10]
+
         })
         
     }
@@ -125,8 +133,74 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         targetView.mask = maskView 
     }
     
+    //MARK: Scroll behaviour.
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == collectionView {
+            let contentOffset = scrollView.contentOffset.y
+            let collectionViewHeigh = collectionView?.bounds.height
+            let contentHeight = scrollView.contentSize.height
+            
+            let triggerOffset = contentHeight - collectionViewHeigh!
+
+            if(contentOffset >= triggerOffset){
+                print("END OF THE PAGE")
+                if(!(gradientView.alpha == 0)){
+
+                    dismissGradientOverlay()
+                }
+            }else{
+                if(gradientView.alpha == 0){
+                    
+                    showGradientOverlay()
+                }
+            }
+        }
+    }
+    
+    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+
+    }
+    
+    
+    func dismissGradientOverlay(){
+        UIView.animate(withDuration: 3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            
+            self.view.removeConstraint(self.centerYConstraint!)
+
+            self.centerYConstraint = self.arrow?.centerYAnchor.constraint(equalTo: self.gradientView.centerYAnchor, constant: -10)
+            
+
+            self.view.addConstraint(self.centerYConstraint!)
+            
+            self.gradientView.alpha = 0
+            self.arrow?.alpha = 0
+            
+            self.view.layoutIfNeeded()
+        }) { (true) in
+            print("DONE!")
+        }
+    }
+    
+    func showGradientOverlay(){
+        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 10, options: .curveEaseOut, animations: {
+            self.view.removeConstraint(self.centerYConstraint!)
+
+            self.centerYConstraint = self.arrow?.centerYAnchor.constraint(equalTo: self.gradientView.centerYAnchor, constant: 10)
+            
+            self.view.addConstraint(self.centerYConstraint!)
+
+            self.gradientView.alpha = 1
+            self.arrow?.alpha = 1
+            
+            self.view.layoutIfNeeded()
+        }) { (true) in
+            print("DONE!")
+        }
+    }
+    
+    
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        return 40
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

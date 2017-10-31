@@ -25,7 +25,7 @@ class HeaderCell: UICollectionViewCell {
         tv.keyboardType = UIKeyboardType.numberPad
         tv.textAlignment = .center
         tv.backgroundColor = UIColor.currentColorScheme[0]
-        tv.textColor = UIColor.white
+        tv.textColor = UIColor.currentColorScheme[3]
         tv.text = "$0.00"
         return tv
     }()

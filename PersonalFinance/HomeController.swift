@@ -645,7 +645,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         titleLabelView.backgroundColor = UIColor.clear
         titleLabelView.textAlignment = .center
         // this next line picks up the UINavBar tint color instead of fixing it to a particular one as in Gavin's solution
-        titleLabelView.textColor = UINavigationBar.appearance().tintColor
+        titleLabelView.textColor = UIColor.currentColorScheme[3]
         titleLabelView.font = UIFont.boldSystemFont(ofSize: 20.0)
         titleLabelView.text = ""
         self.navigationItem.titleView = titleLabelView

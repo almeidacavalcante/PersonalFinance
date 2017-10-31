@@ -35,10 +35,6 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         collectionView?.keyboardDismissMode = .interactive
         self.hideKeyboardWhenTappedAround()
         setupCollectionView()
-        
-
-        
-        
     }
     
     func setupDoneButtonOnKeyboard(){
@@ -86,9 +82,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     var centerYConstraint : NSLayoutConstraint?
     
     func setupArrow(){
-        
-        
-        
+
         arrow = UIImageView(image: #imageLiteral(resourceName: "arrow").withRenderingMode(.alwaysTemplate))
         arrow?.tintColor = UIColor.currentColorScheme[3]
         view.addSubview(arrow!)
@@ -101,20 +95,16 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         view.addConstraint(centerXConstraint!)
         view.addConstraint(centerYConstraint!)
         
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseInOut, animations: {
-
-            self.arrow?.tintColor = UIColor.currentColorScheme[10]
-
-        })
-        
     }
     
     override func viewDidLayoutSubviews() {
         if !masked {
             addGradientMask(targetView: gradientView)
+            
             collectionView?.layoutIfNeeded()
         }
     }
+    
     var masked = false
     // Add gradient mask to view
     func addGradientMask(targetView: UIView){
@@ -143,9 +133,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
             let triggerOffset = contentHeight - collectionViewHeigh!
 
             if(contentOffset >= triggerOffset){
-                print("END OF THE PAGE")
                 if(!(gradientView.alpha == 0)){
-
                     dismissGradientOverlay()
                 }
             }else{
@@ -163,13 +151,13 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     
     
     func dismissGradientOverlay(){
+        self.isAlowedToAnimate = false
         UIView.animate(withDuration: 3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             
             self.view.removeConstraint(self.centerYConstraint!)
-
-            self.centerYConstraint = self.arrow?.centerYAnchor.constraint(equalTo: self.gradientView.centerYAnchor, constant: -10)
+            let constraint = self.centerYConstraint?.constant
+            self.centerYConstraint = self.arrow?.centerYAnchor.constraint(equalTo: self.gradientView.centerYAnchor, constant: -constraint!-10)
             
-
             self.view.addConstraint(self.centerYConstraint!)
             
             self.gradientView.alpha = 0
@@ -177,24 +165,66 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
             
             self.view.layoutIfNeeded()
         }) { (true) in
-            print("DONE!")
+            print("ARROW OUT!")
+            
         }
     }
     
     func showGradientOverlay(){
-        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 10, options: .curveEaseOut, animations: {
-            self.view.removeConstraint(self.centerYConstraint!)
+        self.isAlowedToAnimate = true
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseOut, animations: {
 
-            self.centerYConstraint = self.arrow?.centerYAnchor.constraint(equalTo: self.gradientView.centerYAnchor, constant: 10)
-            
-            self.view.addConstraint(self.centerYConstraint!)
-
+            self.startArrowStandardAnimation()
             self.gradientView.alpha = 1
             self.arrow?.alpha = 1
             
             self.view.layoutIfNeeded()
         }) { (true) in
-            print("DONE!")
+            print("ARROW IN!")
+//            self.startArrowStandardAnimation()
+        }
+    }
+    
+    
+    var isAlowedToAnimate = true
+    func startArrowStandardAnimation(){
+        print("ANIMATING...")
+        print(isAlowedToAnimate)
+        if self.isAlowedToAnimate{
+            UIView.animate(withDuration: 0.5, delay: 0.1, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseOut, animations: {
+                self.view.removeConstraint(self.centerYConstraint!)
+                
+                self.centerYConstraint = self.arrow?.centerYAnchor.constraint(equalTo: self.gradientView.centerYAnchor, constant: -3)
+                
+                self.view.addConstraint(self.centerYConstraint!)
+                
+                self.view.layoutIfNeeded()
+            }) { (true) in
+                if self.isAlowedToAnimate {
+                    UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseOut, animations: {
+                        self.view.removeConstraint(self.centerYConstraint!)
+                        
+                        self.centerYConstraint = self.arrow?.centerYAnchor.constraint(equalTo: self.gradientView.centerYAnchor, constant: 3)
+                        
+                        self.view.addConstraint(self.centerYConstraint!)
+                        
+                        self.view.layoutIfNeeded()
+                        self.startArrowStandardAnimation()
+                    })
+                }
+            }
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        self.isAlowedToAnimate = false
+        print(isAlowedToAnimate)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        if(animated){
+            isAlowedToAnimate = true
+            startArrowStandardAnimation()
         }
     }
     

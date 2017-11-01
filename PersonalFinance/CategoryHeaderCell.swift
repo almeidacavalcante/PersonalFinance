@@ -26,9 +26,9 @@ class CategoryHeaderCell: UICollectionViewCell {
         return tf
     }()
     
-    let categoryNameLabel : UILabel = {
+    let iconsLabel : UILabel = {
         let label = UILabel()
-        label.text = "Category"
+        label.text = "Choose a icon:"
         label.textAlignment = .center
         label.font = UIFont.boldSystemFont(ofSize: 16)
         label.textColor = UIColor.currentColorScheme[8]
@@ -40,11 +40,11 @@ class CategoryHeaderCell: UICollectionViewCell {
         super.init(frame: frame)
         
         self.addSubview(categoryNameTextField)
-        self.addSubview(categoryNameLabel)
+        self.addSubview(iconsLabel)
         
-        categoryNameLabel.anchor(top: self.topAnchor, left: self.leftAnchor, botton: nil, right: self.rightAnchor, paddingTop: 5, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 30)
+        iconsLabel.anchor(top: categoryNameTextField.bottomAnchor, left: self.leftAnchor, botton: nil, right: self.rightAnchor, paddingTop: 5, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 30)
         
-        categoryNameTextField.anchor(top: categoryNameLabel.bottomAnchor, left: self.leftAnchor, botton: nil, right: self.rightAnchor, paddingTop: 5, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 50)
+        categoryNameTextField.anchor(top: self.topAnchor, left: self.leftAnchor, botton: nil, right: self.rightAnchor, paddingTop: 5, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 50)
         
         self.resetColor()
     }

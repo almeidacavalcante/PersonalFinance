@@ -46,7 +46,7 @@ class CustomButton: UIButton {
             imageCache[url.absoluteString] = photoImage
             
             DispatchQueue.main.async {
-                self.setImage(photoImage?.withRenderingMode(.alwaysOriginal), for: .normal)
+                self.setImage(photoImage?.withRenderingMode(.alwaysTemplate), for: .normal)
             }
             }.resume()
     }

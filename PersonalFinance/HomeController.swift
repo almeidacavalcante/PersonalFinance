@@ -26,7 +26,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     let finishButton : UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("INSERIR", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        button.setTitleColor(UIColor.currentColorScheme[2], for: .normal)
         button.backgroundColor = UIColor.currentColorScheme[6]
         button.addTarget(self, action: #selector(handleInsert), for: .touchUpInside)
         return button
@@ -34,11 +35,17 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     let noteButton : UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "note").original(), for: .normal)
-        button.backgroundColor = UIColor.currentColorScheme[7]
+        button.frame = CGRect(x: 0, y: 0, width: 60, height: 60)
+        button.layer.cornerRadius = 0.5 * button.bounds.size.width
+        button.clipsToBounds = true
+        button.setImage(#imageLiteral(resourceName: "note").template(), for: .normal)
+        button.tintColor = UIColor.currentColorScheme[2]
+        button.backgroundColor = UIColor.currentColorScheme[11]
         button.addTarget(self, action: #selector(handleNote), for: .touchUpInside)
         return button
     }()
+    
+    
     
     var header : HeaderCell?
     
@@ -194,9 +201,10 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
     
-    let imageView = UIImageView(image: #imageLiteral(resourceName: "info").withRenderingMode(.alwaysOriginal))
+    let imageView = UIImageView(image: #imageLiteral(resourceName: "info").template())
     
     func showsAddedNote(){
+        imageView.tintColor = UIColor.currentColorScheme[3]
         UIView.animate(withDuration: 0.5) {
             self.imageView.alpha = 1
         }
@@ -212,7 +220,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     var submitButton : UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Submit", for: .normal)
+        button.setTitle("ENTER", for: .normal)
+        button.setTitleColor(UIColor.currentColorScheme[2], for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
         button.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
         return button
     }()
@@ -407,7 +417,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     //MARK: NAVIGATION BAR ITEMS
     lazy var addCategoryBarButton : UIBarButtonItem = {
-            let barButton = UIBarButtonItem(image: #imageLiteral(resourceName: "plus").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleAddCategory))
+            let barButton = UIBarButtonItem(image: #imageLiteral(resourceName: "plus").template(), style: .plain, target: self, action: #selector(handleAddCategory))
         
         return barButton
     }()
@@ -446,12 +456,16 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         view.addSubview(footerContainer)
         footerContainer.addSubview(finishButton)
-        footerContainer.addSubview(noteButton)
+        finishButton.addSubview(noteButton)
+        
         
         
         footerContainer.anchor(top: collectionView?.bottomAnchor, left: view.leftAnchor, botton: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        finishButton.anchor(top: footerContainer.topAnchor, left: footerContainer.leftAnchor, botton: footerContainer.bottomAnchor, right: nil, paddingTop: 1, paddingLeft: 1, paddingBottom: 1, paddingRight: 0, width: 2.25 * width, height: 0)
-        noteButton.anchor(top: footerContainer.topAnchor, left: finishButton.rightAnchor, botton: footerContainer.bottomAnchor, right: footerContainer.rightAnchor, paddingTop: 1, paddingLeft: 1, paddingBottom: 1, paddingRight: 1, width: 0, height: 0)
+        
+        finishButton.anchor(top: footerContainer.topAnchor, left: footerContainer.leftAnchor, botton: footerContainer.bottomAnchor, right: footerContainer.rightAnchor, paddingTop: 1, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        
+        noteButton.anchor(top: finishButton.topAnchor, left: nil, botton: nil, right: finishButton.rightAnchor, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 20, width: 60, height: 60)
+        finishButton.layoutSubviews()
         
     }
     
@@ -488,14 +502,12 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! CategoryCell
         
         let assetName = categories?[indexPath.item].assetName
-        cell.button.setImage(UIImage(named: assetName!)?.withRenderingMode(.alwaysOriginal), for: .normal)
+        cell.button.setImage(UIImage(named: assetName!)?.template(), for: .normal)
         
         cell.category = categories?[indexPath.item]
         
         cell.delegate = self
         
-        //191,218,175
-//        cell.backgroundColor = UIColor.currentColorScheme[2]
         return cell
     }
     
@@ -610,8 +622,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-//        let title = ""
-//        setupTitleLabelTransition(title: title)
 
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseIn, animations: {
             

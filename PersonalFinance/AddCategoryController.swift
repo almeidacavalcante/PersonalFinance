@@ -9,6 +9,10 @@
 
 
 import UIKit
+import Firebase
+import FirebaseAuth
+import FirebaseDatabase
+import FirebaseStorage
 
 class AddCategoryController: UICollectionViewController, UICollectionViewDelegateFlowLayout, CategoryCellDelegate {
     
@@ -28,6 +32,30 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         }
     }
     
+    let insertButton : UIButton = {
+        let button = UIButton(type: .system)
+        button.backgroundColor = UIColor.currentColorScheme[6]
+        button.setTitle("CREATE", for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        button.addTarget(self, action: #selector(handleInsertCategory), for: .touchUpInside)
+        button.setTitleColor(UIColor.currentColorScheme[2], for: .normal)
+        return button
+    }()
+    
+    let availableIcons = [
+        "bandage",
+        "comment",
+        "gas",
+        "doc",
+        "health",
+        "home",
+        "info",
+        "lamp",
+        "note",
+        "plus",
+        "task",
+        "toast"
+    ]
     
     
     override func viewDidLoad() {
@@ -35,6 +63,40 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         collectionView?.keyboardDismissMode = .interactive
         self.hideKeyboardWhenTappedAround()
         setupCollectionView()
+        
+        view.addSubview(insertButton)
+        insertButton.anchor(top: collectionView?.bottomAnchor, left: view.leftAnchor, botton: view.bottomAnchor, right: view.rightAnchor, paddingTop: 1, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        
+        setupTitleLabelView()
+        setupTitleLabelTransition(title: "New Category")
+        
+    }
+    
+    func handleInsertCategory(){
+        self.insertCategory()
+    }
+    
+    fileprivate func insertCategory(){
+        let categoryName = header?.categoryNameTextField.text
+
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else {return}
+        
+        let categoriesRef = FIRDatabase.database().reference().child("categories").child(uid)
+        let ref = categoriesRef.childByAutoId()
+        
+        let assetName = selectedCategoryCell?.category?.assetName
+        
+        
+        let values = ["name": categoryName,
+                      "assetName": assetName]
+        
+        ref.updateChildValues(values) { (err, ref) in
+            if let err = err {
+                print("Failed to save category values in DB:", err)
+            }
+            
+            print("Successfully saved the category in DB:")
+        }
     }
     
     func setupDoneButtonOnKeyboard(){
@@ -43,7 +105,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         //create left side empty space so that done button set on right side
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let doneBtn: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneButtonAction))
-        toolbar.setItems([flexSpace, doneBtn, flexSpace], animated: true)
+        toolbar.setItems([flexSpace, doneBtn, flexSpace], animated: false)
         toolbar.sizeToFit()
         
         //setting toolbar as inputAccessoryView
@@ -230,7 +292,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 40
+        return availableIcons.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -239,7 +301,9 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         
         cell.delegate = self
         
-        cell.button.setImage(#imageLiteral(resourceName: "task").withRenderingMode(.alwaysOriginal), for: .normal)
+        cell.button.setImage(UIImage(named: availableIcons[indexPath.item])?.template(), for: .normal)
+        cell.button.tintColor = UIColor.currentColorScheme[12]
+
         cell.resetColor()
         
         return cell
@@ -286,6 +350,34 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         header?.backgroundColor = UIColor.currentColorScheme[0]
         return header!
     }
+    
+    
+    //MARK: REPEATED CODE !!!! REFACTOR, PLEASE!
+    fileprivate func setupTitleLabelTransition(title: String){
+        let titleAnimation = CATransition()
+        titleAnimation.duration = 0.5
+        titleAnimation.type = kCATransitionFade
+        titleAnimation.subtype = kCATransitionFromTop
+        titleAnimation.timingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionEaseInEaseOut)
+        
+        self.navigationItem.titleView!.layer.add(titleAnimation, forKey: "changeTitle")
+        (self.navigationItem.titleView as! UILabel).text = title
+        
+        // I added this to autosize the title after setting new text
+        (self.navigationItem.titleView as! UILabel).sizeToFit()
+    }
+    
+    fileprivate func setupTitleLabelView(){
+        let titleLabelView = UILabel.init(frame: CGRect(x: 0, y: 0, width: 0, height: 44))
+        titleLabelView.backgroundColor = UIColor.clear
+        titleLabelView.textAlignment = .center
+        // this next line picks up the UINavBar tint color instead of fixing it to a particular one as in Gavin's solution
+        titleLabelView.textColor = UIColor.currentColorScheme[3]
+        titleLabelView.font = UIFont.boldSystemFont(ofSize: 20.0)
+        titleLabelView.text = ""
+        self.navigationItem.titleView = titleLabelView
+    }
+    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: view.frame.width, height: 100)

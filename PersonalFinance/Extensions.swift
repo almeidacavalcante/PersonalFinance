@@ -34,6 +34,7 @@ class TextField: UITextField {
     }
 }
 
+
 extension UIView {
     
     func mask(withRect rect: CGRect, inverse: Bool = false) {
@@ -174,6 +175,10 @@ extension UIView
 extension UIImage {
     func original() -> UIImage{
         let image = self.withRenderingMode(.alwaysOriginal)
+        return image
+    }
+    func template() -> UIImage{
+        let image = self.withRenderingMode(.alwaysTemplate)
         return image
     }
 }

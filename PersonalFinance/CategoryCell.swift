@@ -18,6 +18,7 @@ class CategoryCell: UICollectionViewCell {
     
     lazy var button : CustomButton = {
         let button = CustomButton(type: .system)
+        button.tintColor = UIColor.currentColorScheme[12]
         return button
     }()
     

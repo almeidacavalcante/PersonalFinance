@@ -62,11 +62,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         collectionView?.keyboardDismissMode = .interactive
         
-        self.categories = [Category(descriptionContent: "Health", assetName: "bandage"),
-                            Category(descriptionContent: "Fuel", assetName: "gas"),
-                            Category(descriptionContent: "Home", assetName: "home"),
-                            Category(descriptionContent: "Energy", assetName: "lamp"),
-                            Category(descriptionContent: "Food", assetName: "toast")]
+        fetchCategories()
+        
         
         //134,172,151
         view.backgroundColor = UIColor.currentColorScheme[3]
@@ -79,6 +76,21 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
 
     }
+    
+    func fetchCategories(){
+        print("Fetching comments")
+        
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else {return}
+        
+        FIRDatabase.fetchCategoriesWithUID(uid: uid) { (categories) in
+            self.categories = categories
+            DispatchQueue.main.async {
+                self.collectionView?.reloadData()
+            }
+        }
+        
+    }
+    
     
 //    func fetchCategories(){
 //        guard let uid = FIRAuth.auth()?.currentUser?.uid else {return}
@@ -201,18 +213,125 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
     
-    let imageView = UIImageView(image: #imageLiteral(resourceName: "info").template())
+    let infoButton : UIButton = {
+        let button = UIButton(type: .system)
+        button.addTarget(self, action: #selector(handleInfo), for: .touchUpInside)
+        return button
+    }()
+    
+    
+    let infoOverlay : UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.currentColorScheme[3]
+        return view
+    }()
+    var infoWidthConstraint : NSLayoutConstraint?
+    
+    
+    func handleInfo(){
+        view.addSubview(infoOverlay)
+        infoOverlay.anchor(top: navigationController?.navigationBar.bottomAnchor, left: header?.leftAnchor, botton: nil, right: nil, paddingTop:1, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
+        
+        self.view.layoutIfNeeded()
+        
+        animateInfoIn()
+    }
+    
+    let closeButton : UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "x").template(), for: .normal)
+        button.tintColor = UIColor.currentColorScheme[9]
+        button.addTarget(self, action: #selector(handleClose), for: .touchUpInside)
+        return button
+    }()
+    
+    func handleClose(){
+        animateInfoOut()
+    }
+    
+    func animateInfoOut(){
+        
+        infoWidthConstraint = NSLayoutConstraint(item: infoOverlay, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+        
+        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseInOut, animations: {
+            self.infoOverlay.removeShadow()
+            self.view.removeConstraint(self.infoWidthConstraint!)
+            self.view.addConstraint(self.infoWidthConstraint!)
+            self.infoLabel.removeFromSuperview()
+            self.view.layoutIfNeeded()
+            
+            
+        }) { (true) in
+            self.closeButton.removeFromSuperview()
+            
+            print("INFO ANIMATED OUT")
+        }
+    }
+    
+    func animateInfoIn(){
+        
+        if self.infoWidthConstraint != nil {
+            self.view.removeConstraint(self.infoWidthConstraint!)
+        }
+        
+        infoWidthConstraint = NSLayoutConstraint(item: infoOverlay, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 200)
+        
+        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseInOut, animations: {
+            
+            self.view.addConstraint(self.infoWidthConstraint!)
+            
+            self.view.layoutIfNeeded()
+            
+        }) { (true) in
+            
+            self.animateLabelAndCloseButton()
+            self.infoOverlay.dropShadow()
+            print("INFO ANIMATED")
+        }
+    }
+    
+    let infoLabel : UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor.currentColorScheme[9]
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        
+        
+        return label
+    }()
+    
+    func animateLabelAndCloseButton(){
+        
+        self.infoOverlay.addSubview(self.closeButton)
+        self.infoOverlay.addSubview(self.infoLabel)
+        
+        self.closeButton.anchor(top: self.infoOverlay.topAnchor, left: nil, botton: nil, right: self.infoOverlay.rightAnchor, paddingTop: 15, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 20, height: 20)
+        self.infoLabel.anchor(top: self.infoOverlay.topAnchor, left: self.infoOverlay.leftAnchor, botton: self.infoOverlay.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 170, height: 0)
+        
+        closeButton.alpha = 0
+        self.view.layoutIfNeeded()
+        
+        UIView.animate(withDuration: 0.3) {
+            
+            self.closeButton.alpha = 1
+            self.infoLabel.text = self.lastNote
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    
+    
     
     func showsAddedNote(){
-        imageView.tintColor = UIColor.currentColorScheme[3]
+        
+        infoButton.tintColor = UIColor.currentColorScheme[3]
         UIView.animate(withDuration: 0.5) {
-            self.imageView.alpha = 1
+            self.infoButton.alpha = 1
         }
     }
     
     func hidesAddedNote(){
         UIView.animate(withDuration: 0.5) {
-            self.imageView.alpha = 0
+            self.infoButton.alpha = 0
         }
     }
 
@@ -361,6 +480,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             try FIRAuth.auth()?.signOut()
             DispatchQueue.main.async {
                 let signInController = SignInController()
+                
                 self.navigationController?.pushViewController(signInController, animated: true)
                 
             }
@@ -391,16 +511,16 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         rawValue?.remove(at: (rawValue?.startIndex)!)
         print("RAW VALUE -------> ", rawValue)
         
-        
         guard let value = Double(rawValue!) else {return}
         
         guard let uid = FIRAuth.auth()?.currentUser?.uid else {return}
         
+        guard let category = selectedCategoryCell?.category else {return}
+        guard let categoryId = category.id else {return}
+        
         let userPostRef = FIRDatabase.database().reference().child("bills").child(uid)
         let ref = userPostRef.childByAutoId()
-        let categoryId = selectedCategoryCell?.category?.assetName
-        
-        
+
         let values = ["value": value,
                       "categoryId": categoryId,
                       "note" : lastNote,
@@ -427,6 +547,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         guard let controller = addCategoryController else {
             let layout = UICollectionViewFlowLayout()
             self.addCategoryController = AddCategoryController(collectionViewLayout: layout)
+            self.addCategoryController?.homeControllerRef = self
             navigationController?.pushViewController(self.addCategoryController!, animated: true)
             return
         }
@@ -558,9 +679,11 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     
     func setupAddedNote(){
-        view.addSubview(imageView)
-        imageView.anchor(top: self.header?.topAnchor, left: self.header?.leftAnchor, botton: nil, right: nil, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        imageView.alpha = 0
+        infoButton.setImage(#imageLiteral(resourceName: "info").template(), for: .normal)
+        
+        view.addSubview(infoButton)
+        infoButton.anchor(top: self.header?.topAnchor, left: self.header?.leftAnchor, botton: nil, right: nil, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        infoButton.alpha = 0
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {

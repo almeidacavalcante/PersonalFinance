@@ -16,7 +16,7 @@ import FirebaseStorage
 
 class AddCategoryController: UICollectionViewController, UICollectionViewDelegateFlowLayout, CategoryCellDelegate {
     
-
+    var homeControllerRef : HomeController?
     let moreOverlay : UIView = {
         let v = UIView()
         v.backgroundColor = UIColor.currentColorScheme[0]
@@ -54,7 +54,19 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         "note",
         "plus",
         "task",
-        "toast"
+        "toast",
+        "love",
+        "dollar",
+        "dollar2",
+        "hugby",
+        "hugby2",
+        "bus",
+        "phone",
+        "cam",
+        "book",
+        "books2",
+        "books",
+        "auction"
     ]
     
     
@@ -77,18 +89,20 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     }
     
     fileprivate func insertCategory(){
-        let categoryName = header?.categoryNameTextField.text
-
+        
+        guard let categoryName = header?.categoryNameTextField.text else {return}
+        guard let assetName = selectedCategoryCell?.category?.assetName else {return}
+        
+        let category = Category(descriptionContent: categoryName, assetName: assetName)
+        
         guard let uid = FIRAuth.auth()?.currentUser?.uid else {return}
         
         let categoriesRef = FIRDatabase.database().reference().child("categories").child(uid)
         let ref = categoriesRef.childByAutoId()
+
         
-        let assetName = selectedCategoryCell?.category?.assetName
-        
-        
-        let values = ["name": categoryName,
-                      "assetName": assetName]
+        let values = ["name": category.descriptionContent,
+                      "assetName": category.assetName]
         
         ref.updateChildValues(values) { (err, ref) in
             if let err = err {
@@ -96,7 +110,19 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
             }
             
             print("Successfully saved the category in DB:")
+            DispatchQueue.main.async {
+                
+                self.resetScreen()
+            }
+            
         }
+    }
+    
+    func resetScreen(){
+        homeControllerRef?.fetchCategories()
+        collectionView?.resetScrollPositionToTop()
+        collectionView?.reloadData()
+        header?.categoryNameTextField.text = ""
     }
     
     func setupDoneButtonOnKeyboard(){
@@ -301,8 +327,12 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         
         cell.delegate = self
         
-        cell.button.setImage(UIImage(named: availableIcons[indexPath.item])?.template(), for: .normal)
+        let category = Category(descriptionContent: "", assetName: availableIcons[indexPath.item])
+        
+        cell.category = category
+        cell.button.setImage(UIImage(named: category.assetName!)?.template(), for: .normal)
         cell.button.tintColor = UIColor.currentColorScheme[12]
+        
 
         cell.resetColor()
         

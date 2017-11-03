@@ -28,7 +28,7 @@ class CategoryHeaderCell: UICollectionViewCell {
     
     let iconsLabel : UILabel = {
         let label = UILabel()
-        label.text = "Choose a icon:"
+        label.text = "Choose an icon:"
         label.textAlignment = .center
         label.font = UIFont.boldSystemFont(ofSize: 16)
         label.textColor = UIColor.currentColorScheme[8]

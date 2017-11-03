@@ -25,7 +25,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     let finishButton : UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("INSERIR", for: .normal)
+        button.setTitle("INSERT", for: .normal)
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         button.setTitleColor(UIColor.currentColorScheme[2], for: .normal)
         button.backgroundColor = UIColor.currentColorScheme[6]
@@ -75,6 +75,10 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         setupBlackView()
         
 
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle{
+        return .lightContent
     }
     
     func fetchCategories(){
@@ -429,8 +433,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseIn, animations: {
             overlay.frame.origin.x += (self.view.frame.width)
             
-            
-            
         }) { (true) in
             UIView.animate(withDuration: 0.3, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
                circle.frame.origin.y += 20
@@ -542,7 +544,121 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         return barButton
     }()
     
+    lazy var openMenuBarButton : UIBarButtonItem = {
+        let barButton = UIBarButtonItem()
+        
+        let icon = UIImage(named: "menu")?.template()
+        let iconWidth = icon?.size.width
+        let iconSize = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: iconWidth!, height: iconWidth!))
+        
+        let iconButton = UIButton(frame: iconSize)
+        iconButton.addTarget(self, action: #selector(handleManu), for: .touchUpInside)
+        iconButton.setBackgroundImage(icon, for: .normal)
+        
+        barButton.customView = iconButton
+        
+        return barButton
+    }()
+    
+    var menu : UIView = {
+        let menu = UIView()
+        menu.backgroundColor = UIColor.currentColorScheme[8]
+        return menu
+    }()
+    
+    func handleManu(){
+        print("Open MENU")
+        view.addSubview(menu)
+        menu.anchor(top: view.topAnchor, left: view.leftAnchor, botton: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        
+        view.layoutIfNeeded()
+        
+        if !isMenuOn {
+            animateMenuIn()
+        }else{
+            animateMenuOut()
+        }
+        
+    }
+    
+    var menuWidthConstraint : NSLayoutConstraint?
+    var isMenuOn = false
+    
+    func animateMenuIn(){
+        
+        animateMenuIconIn()
+        
+        if self.menuWidthConstraint != nil {
+            self.view.removeConstraint(self.menuWidthConstraint!)
+        }
+        
+        menuWidthConstraint = NSLayoutConstraint(item: menu, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 54)
+        
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 10, options: .curveEaseInOut, animations: {
+            
+            self.view.addConstraint(self.menuWidthConstraint!)
+            
+            self.view.layoutIfNeeded()
+            
+        }) { (true) in
+            self.isMenuOn = !self.isMenuOn
+            self.menu.dropShadow(color: .black, opacity: 0.5, offSet: CGSize(width: 1, height: 0), radius: 1, scale: true)
+            self.view.layoutIfNeeded()
+            print("MENU ANIMATED IN")
+        }
+    }
+
+    
+    func animateMenuOut(){
+        
+        animateMenuIconOut()
+        
+        menuWidthConstraint = NSLayoutConstraint(item: menu, attribute: .width, relatedBy: .equal
+            , toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
+        
+
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 10, options: .curveEaseInOut, animations: {
+            
+            self.view.removeConstraint(self.menuWidthConstraint!)
+            self.menu.removeShadow()
+            self.view.addConstraint(self.menuWidthConstraint!)
+            
+            self.view.layoutIfNeeded()
+            
+        }) { (true) in
+            self.isMenuOn = !self.isMenuOn
+            
+            
+            print("MENU ANIMATED OUT")
+        }
+    }
+    
+    func animateMenuIconIn(){
+        //openMenuBarButton
+        UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.33, initialSpringVelocity: 10, options: .curveEaseInOut, animations: {
+            
+            self.openMenuBarButton.customView?.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+            
+            self.openMenuBarButton.customView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi/2)
+
+        })
+    }
+    
+    func animateMenuIconOut(){
+        //openMenuBarButton
+        UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.33, initialSpringVelocity: 10, options: .curveEaseInOut, animations: {
+            self.openMenuBarButton.customView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi/2)
+            self.openMenuBarButton.customView?.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+
+            
+        })
+        
+    }
+    
+    
     var addCategoryController : AddCategoryController?
+    
+    
     func handleAddCategory(){
         guard let controller = addCategoryController else {
             let layout = UICollectionViewFlowLayout()
@@ -557,11 +673,16 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     func setupNavigationBar(){
         navigationController?.navigationBar.barTintColor = UIColor.currentColorScheme[1]
         setStatusBarBackgroundColor(color: UIColor.currentColorScheme[2])
+        
         navigationItem.rightBarButtonItem = addCategoryBarButton
+        navigationItem.leftBarButtonItem = openMenuBarButton
+        
         navigationController?.navigationBar.tintColor = UIColor.currentColorScheme[3]
         
         navigationItem.rightBarButtonItem?.imageInsets.top = 2
         navigationItem.rightBarButtonItem?.imageInsets.bottom = -2
+        navigationItem.leftBarButtonItem?.imageInsets.top = 2
+        navigationItem.leftBarButtonItem?.imageInsets.bottom = -2
     }
     
     func setStatusBarBackgroundColor(color: UIColor) {

@@ -82,8 +82,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     func fetchCategories(){
-        print("Fetching comments")
-        
         guard let uid = FIRAuth.auth()?.currentUser?.uid else {return}
         
         FIRDatabase.fetchCategoriesWithUID(uid: uid) { (categories) in
@@ -594,7 +592,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         menuWidthConstraint = NSLayoutConstraint(item: menu, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 54)
         
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 10, options: .curveEaseInOut, animations: {
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: 6, options: .curveEaseInOut, animations: {
             
             self.view.addConstraint(self.menuWidthConstraint!)
             
@@ -603,20 +601,139 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }) { (true) in
             self.isMenuOn = !self.isMenuOn
             self.menu.dropShadow(color: .black, opacity: 0.5, offSet: CGSize(width: 1, height: 0), radius: 1, scale: true)
+
             self.view.layoutIfNeeded()
             print("MENU ANIMATED IN")
         }
+        
+        self.animateMenusIn()
+        
     }
+    
+    let addCategoryButton : UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "plus").template(), for: .normal)
+        button.tintColor = UIColor.currentColorScheme[3]
+        return button
+    }()
+    let addCategoryButton2 : UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "home").template(), for: .normal)
+        button.tintColor = UIColor.currentColorScheme[3]
+        return button
+    }()
+    let addCategoryButton3 : UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "food").template(), for: .normal)
+        button.tintColor = UIColor.currentColorScheme[3]
+        return button
+    }()
+    let addCategoryButton4 : UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "lamp").template(), for: .normal)
+        button.tintColor = UIColor.currentColorScheme[3]
+        return button
+    }()
+    
+    func animateMenusIn(){
+        animateMenusIconsIndividuallyIn(buttons: [addCategoryButton,addCategoryButton2,addCategoryButton3, addCategoryButton4], yOffset: 30, delay: 0.0)
+    }
+    
+    func animateMenusOut(){
+        animateMenusIconsIndividuallyOut(buttons: [addCategoryButton,addCategoryButton2,addCategoryButton3, addCategoryButton4], delay: 0.0)
+    }
+    
+    var menusXPositionConstraints : [NSLayoutConstraint] = []
+    
+    func animateMenusIconsIndividuallyIn(buttons: [UIButton], yOffset: CGFloat, delay: TimeInterval){
+        
 
+        let increment : CGFloat = 60
+        var allButtons = buttons
+        guard let button = buttons.first else {return}
+        
+        self.menu.addSubview(button)
+        
+        button.anchor(top: self.menu.topAnchor, left: self.menu.leftAnchor, botton: nil, right: nil, paddingTop: 4.0+yOffset, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 40, height: 40)
+        
+        //Menu OUT Constraint
+        var constraint = NSLayoutConstraint(item: button, attribute: .leading, relatedBy: .equal, toItem: self.menu, attribute: .leading, multiplier: 1, constant: -50)
+        
+        
+        self.view.addConstraint(constraint)
+        button.alpha = 0
+        
+        self.view.layoutIfNeeded()
+        
+        UIView.animate(withDuration: 0.5, delay: delay, usingSpringWithDamping: 0.8, initialSpringVelocity: 5, options: .curveEaseOut, animations: {
+            self.view.removeConstraint(constraint)
+            
+            //Menu In Constraint
+            constraint = NSLayoutConstraint(item: button, attribute: .leading, relatedBy: .equal, toItem: self.menu, attribute: .leading, multiplier: 1, constant: 6)
+            
+            self.view.addConstraint(constraint)
+            self.menusXPositionConstraints.append(constraint)
+            button.alpha = 1
+            self.view.layoutIfNeeded()
+            
+        }, completion: { (true) in
+            print("Individual menu animated")
+        })
+        
+        allButtons.removeFirst()
+        self.animateMenusIconsIndividuallyIn(buttons: allButtons, yOffset: yOffset+increment, delay: delay+0.1)
+
+    }
+    
+    var menuIndex = 0
+    
+    func animateMenusIconsIndividuallyOut(buttons: [UIButton], delay: TimeInterval){
+        
+        var allButtons = buttons
+        var constraint = menusXPositionConstraints[menuIndex]
+        guard let button = buttons.first else {return}
+        
+        //New Constraint!
+        constraint = NSLayoutConstraint(item: button, attribute: .leading, relatedBy: .equal, toItem: self.menu, attribute: .leading, multiplier: 1, constant: -50)
+        
+        self.menusXPositionConstraints[menuIndex] = constraint
+        
+        UIView.animate(withDuration: 0.5, delay: delay, usingSpringWithDamping: 0.8, initialSpringVelocity: 5, options: .curveEaseOut, animations: {
+            self.view.removeConstraint(constraint)
+            self.view.addConstraint(constraint)
+            
+            button.alpha = 0
+            self.view.layoutIfNeeded()
+            
+        }, completion: { (true) in
+            print("Individual menu animated out")
+            
+        })
+        
+
+        allButtons.removeFirst()
+        if menuIndex <= buttons.count {
+            menuIndex += 1
+            self.animateMenusIconsIndividuallyOut(buttons: allButtons, delay: delay)
+        }else{
+            menuIndex = 0
+            self.menusXPositionConstraints.removeAll()
+            self.addCategoryButton.removeFromSuperview()
+            self.addCategoryButton2.removeFromSuperview()
+            self.addCategoryButton3.removeFromSuperview()
+            self.addCategoryButton4.removeFromSuperview()
+            self.view.removeConstraints(menusXPositionConstraints)
+        }
+    }
     
     func animateMenuOut(){
         
         animateMenuIconOut()
+        animateMenusOut()
         
         menuWidthConstraint = NSLayoutConstraint(item: menu, attribute: .width, relatedBy: .equal
             , toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0)
         
-
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 10, options: .curveEaseInOut, animations: {
             
             self.view.removeConstraint(self.menuWidthConstraint!)
@@ -627,8 +744,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             
         }) { (true) in
             self.isMenuOn = !self.isMenuOn
-            
-            
+        
             print("MENU ANIMATED OUT")
         }
     }

@@ -38,7 +38,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         button.frame = CGRect(x: 0, y: 0, width: 60, height: 60)
         button.layer.cornerRadius = 0.5 * button.bounds.size.width
         button.clipsToBounds = true
-        button.setImage(#imageLiteral(resourceName: "note").template(), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "edit3").template(), for: .normal)
         button.tintColor = UIColor.currentColorScheme[2]
         button.backgroundColor = UIColor.currentColorScheme[11]
         button.addTarget(self, action: #selector(handleNote), for: .touchUpInside)
@@ -82,36 +82,18 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     func fetchCategories(){
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else {return}
-        
-        FIRDatabase.fetchCategoriesWithUID(uid: uid) { (categories) in
+        LibraryAPI.sharedInstance.fetchCategories { (categories) in
             self.categories = categories
+            
             DispatchQueue.main.async {
                 self.collectionView?.reloadData()
             }
         }
-        
     }
     
-    
-//    func fetchCategories(){
-//        guard let uid = FIRAuth.auth()?.currentUser?.uid else {return}
-//        
-//        FIRDatabase.fetchCategoriesWithUID(uid: uid) { (categories) in
-//            self.categories = categories
-//            DispatchQueue.main.async {
-//                self.collectionView?.reloadData()
-//            }
-//        }
-//    }
-    
     func handleInsert(){
-//        self.saveImageAndGenerateUrl()
-        
         self.showOverlayScreen()
-        
         self.saveTheBill()
-
     }
     
     func handleNote(){
@@ -476,17 +458,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     func handleLogout(){
-        do {
-            try FIRAuth.auth()?.signOut()
-            DispatchQueue.main.async {
-                let signInController = SignInController()
-                
-                self.navigationController?.pushViewController(signInController, animated: true)
-                
-            }
-        } catch let signOutErr {
-            print("Failed to sign out:", signOutErr)
-        }
+        print("Logging out")
     }
     
     
@@ -509,7 +481,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     fileprivate func saveTheBill(){
         var rawValue = header?.currencyField.text
         rawValue?.remove(at: (rawValue?.startIndex)!)
-        print("RAW VALUE -------> ", rawValue)
         
         guard let value = Double(rawValue!) else {return}
         
@@ -536,11 +507,11 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     //MARK: NAVIGATION BAR ITEMS
-    lazy var addCategoryBarButton : UIBarButtonItem = {
-            let barButton = UIBarButtonItem(image: #imageLiteral(resourceName: "plus").template(), style: .plain, target: self, action: #selector(handleAddCategory))
-        
-        return barButton
-    }()
+//    lazy var addCategoryBarButton : UIBarButtonItem = {
+//            let barButton = UIBarButtonItem(image: #imageLiteral(resourceName: "plus").template(), style: .plain, target: self, action: #selector(handleAddCategory))
+//        
+//        return barButton
+//    }()
     
     lazy var openMenuBarButton : UIBarButtonItem = {
         let barButton = UIBarButtonItem()
@@ -612,35 +583,48 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     let addCategoryButton : UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "plus").template(), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "add2").template(), for: .normal)
+        button.tintColor = UIColor.currentColorScheme[3]
+        button.addTarget(self, action: #selector(handleAddCategory), for: .touchUpInside)
+        return button
+    }()
+    let calendarDayButton : UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "calendar1").template(), for: .normal)
         button.tintColor = UIColor.currentColorScheme[3]
         return button
     }()
-    let addCategoryButton2 : UIButton = {
+    let calendarWeekButton : UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "home").template(), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "calendar7-").template(), for: .normal)
         button.tintColor = UIColor.currentColorScheme[3]
         return button
     }()
-    let addCategoryButton3 : UIButton = {
+    let calendarMonthButton : UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "food").template(), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "calendar30").template(), for: .normal)
         button.tintColor = UIColor.currentColorScheme[3]
-        return button
-    }()
-    let addCategoryButton4 : UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "lamp").template(), for: .normal)
-        button.tintColor = UIColor.currentColorScheme[3]
+        button.addTarget(self, action: #selector(handleOpenMonthReport), for: .touchUpInside)
         return button
     }()
     
+    func handleOpenMonthReport(){
+        guard let controller = monthReportController else {
+            let layout = UICollectionViewFlowLayout()
+            self.monthReportController = MonthReportController(collectionViewLayout: layout)
+            self.monthReportController?.homeControllerRef = self
+            navigationController?.pushViewController(self.monthReportController!, animated: true)
+            return
+        }
+        navigationController?.pushViewController(controller, animated: true)
+    }
+    
     func animateMenusIn(){
-        animateMenusIconsIndividuallyIn(buttons: [addCategoryButton,addCategoryButton2,addCategoryButton3, addCategoryButton4], yOffset: 30, delay: 0.0)
+        animateMenusIconsIndividuallyIn(buttons: [addCategoryButton,calendarDayButton,calendarWeekButton, calendarMonthButton], yOffset: 30, delay: 0.0)
     }
     
     func animateMenusOut(){
-        animateMenusIconsIndividuallyOut(buttons: [addCategoryButton,addCategoryButton2,addCategoryButton3, addCategoryButton4], delay: 0.0)
+        animateMenusIconsIndividuallyOut(buttons: [addCategoryButton,calendarDayButton,calendarWeekButton, calendarMonthButton], delay: 0.0)
     }
     
     var menusXPositionConstraints : [NSLayoutConstraint] = []
@@ -719,9 +703,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             menuIndex = 0
             self.menusXPositionConstraints.removeAll()
             self.addCategoryButton.removeFromSuperview()
-            self.addCategoryButton2.removeFromSuperview()
-            self.addCategoryButton3.removeFromSuperview()
-            self.addCategoryButton4.removeFromSuperview()
+            self.calendarDayButton.removeFromSuperview()
+            self.calendarWeekButton.removeFromSuperview()
+            self.calendarMonthButton.removeFromSuperview()
             self.view.removeConstraints(menusXPositionConstraints)
         }
     }
@@ -773,6 +757,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     
     var addCategoryController : AddCategoryController?
+    var monthReportController : MonthReportController?
     
     
     func handleAddCategory(){
@@ -790,7 +775,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         navigationController?.navigationBar.barTintColor = UIColor.currentColorScheme[1]
         setStatusBarBackgroundColor(color: UIColor.currentColorScheme[2])
         
-        navigationItem.rightBarButtonItem = addCategoryBarButton
         navigationItem.leftBarButtonItem = openMenuBarButton
         
         navigationController?.navigationBar.tintColor = UIColor.currentColorScheme[3]
@@ -809,9 +793,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     func setupContainerView(){
-        
-        let width = view.frame.width/3
-        
         view.addSubview(footerContainer)
         footerContainer.addSubview(finishButton)
         finishButton.addSubview(noteButton)

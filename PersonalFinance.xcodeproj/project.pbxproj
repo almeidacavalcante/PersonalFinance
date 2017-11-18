@@ -9,6 +9,13 @@
 /* Begin PBXBuildFile section */
 		B5277D3E627332CD8696808D /* Pods_PersonalFinance.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8BABF7717E6F0B7996BF04E /* Pods_PersonalFinance.framework */; };
 		D55D4B3F1FA4B9E9008A034D /* CategoryHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55D4B3E1FA4B9E9008A034D /* CategoryHeaderCell.swift */; };
+		D589895C1FAF64E5005EAAF3 /* MonthReportCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D589895B1FAF64E5005EAAF3 /* MonthReportCell.swift */; };
+		D589895E1FAFC2D4005EAAF3 /* MonthReportDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D589895D1FAFC2D4005EAAF3 /* MonthReportDetailsController.swift */; };
+		D58989601FAFCC38005EAAF3 /* Bill.swift in Sources */ = {isa = PBXBuildFile; fileRef = D589895F1FAFCC38005EAAF3 /* Bill.swift */; };
+		D58989621FAFD59D005EAAF3 /* BillCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58989611FAFD59D005EAAF3 /* BillCell.swift */; };
+		D58989681FBFAA09005EAAF3 /* LibraryAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58989671FBFAA09005EAAF3 /* LibraryAPI.swift */; };
+		D589896A1FBFB262005EAAF3 /* PersistencyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58989691FBFB262005EAAF3 /* PersistencyManager.swift */; };
+		D59399371FAF55A300434703 /* MonthReportController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59399361FAF55A300434703 /* MonthReportController.swift */; };
 		D59754DF1F98D340001BBE8B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59754DE1F98D340001BBE8B /* AppDelegate.swift */; };
 		D59754E11F98D340001BBE8B /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59754E01F98D340001BBE8B /* HomeController.swift */; };
 		D59754E61F98D340001BBE8B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D59754E51F98D340001BBE8B /* Assets.xcassets */; };
@@ -20,7 +27,6 @@
 		D59755011F9E3E0D001BBE8B /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59755001F9E3E0D001BBE8B /* Category.swift */; };
 		D59755031F9E87C6001BBE8B /* CustomImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59755021F9E87C6001BBE8B /* CustomImageView.swift */; };
 		D59755051F9E8946001BBE8B /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59755041F9E8946001BBE8B /* CustomButton.swift */; };
-		D59755071F9ECE2A001BBE8B /* SignInController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59755061F9ECE2A001BBE8B /* SignInController.swift */; };
 		D5F017FD1FA3B4A100A2EFA3 /* AddCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F017FC1FA3B4A100A2EFA3 /* AddCategoryController.swift */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +34,13 @@
 		4E47D166CABD39F148E9B0FC /* Pods-PersonalFinance.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PersonalFinance.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PersonalFinance/Pods-PersonalFinance.debug.xcconfig"; sourceTree = "<group>"; };
 		C8BABF7717E6F0B7996BF04E /* Pods_PersonalFinance.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PersonalFinance.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D55D4B3E1FA4B9E9008A034D /* CategoryHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryHeaderCell.swift; sourceTree = "<group>"; };
+		D589895B1FAF64E5005EAAF3 /* MonthReportCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonthReportCell.swift; sourceTree = "<group>"; };
+		D589895D1FAFC2D4005EAAF3 /* MonthReportDetailsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonthReportDetailsController.swift; sourceTree = "<group>"; };
+		D589895F1FAFCC38005EAAF3 /* Bill.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bill.swift; sourceTree = "<group>"; };
+		D58989611FAFD59D005EAAF3 /* BillCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BillCell.swift; sourceTree = "<group>"; };
+		D58989671FBFAA09005EAAF3 /* LibraryAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryAPI.swift; sourceTree = "<group>"; };
+		D58989691FBFB262005EAAF3 /* PersistencyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistencyManager.swift; sourceTree = "<group>"; };
+		D59399361FAF55A300434703 /* MonthReportController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonthReportController.swift; sourceTree = "<group>"; };
 		D59754DB1F98D340001BBE8B /* PersonalFinance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PersonalFinance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D59754DE1F98D340001BBE8B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D59754E01F98D340001BBE8B /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
@@ -41,7 +54,6 @@
 		D59755001F9E3E0D001BBE8B /* Category.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		D59755021F9E87C6001BBE8B /* CustomImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomImageView.swift; sourceTree = "<group>"; };
 		D59755041F9E8946001BBE8B /* CustomButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
-		D59755061F9ECE2A001BBE8B /* SignInController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInController.swift; sourceTree = "<group>"; };
 		D597550A1F9ED200001BBE8B /* PersonalFinance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PersonalFinance.entitlements; sourceTree = "<group>"; };
 		D5F017FC1FA3B4A100A2EFA3 /* AddCategoryController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCategoryController.swift; sourceTree = "<group>"; };
 		F3D209C5260E4608C9A4655B /* Pods-PersonalFinance.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PersonalFinance.release.xcconfig"; path = "Pods/Target Support Files/Pods-PersonalFinance/Pods-PersonalFinance.release.xcconfig"; sourceTree = "<group>"; };
@@ -76,6 +88,42 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		D58989631FBFA990005EAAF3 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				D59754E01F98D340001BBE8B /* HomeController.swift */,
+			);
+			name = Home;
+			sourceTree = "<group>";
+		};
+		D58989641FBFA997005EAAF3 /* AddCategory */ = {
+			isa = PBXGroup;
+			children = (
+				D5F017FC1FA3B4A100A2EFA3 /* AddCategoryController.swift */,
+			);
+			name = AddCategory;
+			sourceTree = "<group>";
+		};
+		D58989651FBFA9B1005EAAF3 /* LibraryAPI */ = {
+			isa = PBXGroup;
+			children = (
+				D58989671FBFAA09005EAAF3 /* LibraryAPI.swift */,
+				D58989691FBFB262005EAAF3 /* PersistencyManager.swift */,
+			);
+			name = LibraryAPI;
+			sourceTree = "<group>";
+		};
+		D59399381FAF628700434703 /* MonthReport */ = {
+			isa = PBXGroup;
+			children = (
+				D59399361FAF55A300434703 /* MonthReportController.swift */,
+				D589895B1FAF64E5005EAAF3 /* MonthReportCell.swift */,
+				D589895D1FAFC2D4005EAAF3 /* MonthReportDetailsController.swift */,
+				D58989611FAFD59D005EAAF3 /* BillCell.swift */,
+			);
+			name = MonthReport;
+			sourceTree = "<group>";
+		};
 		D59754D21F98D33F001BBE8B = {
 			isa = PBXGroup;
 			children = (
@@ -97,9 +145,10 @@
 		D59754DD1F98D340001BBE8B /* PersonalFinance */ = {
 			isa = PBXGroup;
 			children = (
+				D58989651FBFA9B1005EAAF3 /* LibraryAPI */,
 				D597550A1F9ED200001BBE8B /* PersonalFinance.entitlements */,
 				D59754DE1F98D340001BBE8B /* AppDelegate.swift */,
-				D59754F31F98E8AE001BBE8B /* controller */,
+				D59754F31F98E8AE001BBE8B /* controllers */,
 				D59754F21F98E8A9001BBE8B /* view */,
 				D59754F11F98E8A4001BBE8B /* model */,
 				D59754F01F98E895001BBE8B /* extensions */,
@@ -125,6 +174,7 @@
 			isa = PBXGroup;
 			children = (
 				D59755001F9E3E0D001BBE8B /* Category.swift */,
+				D589895F1FAFCC38005EAAF3 /* Bill.swift */,
 			);
 			name = model;
 			sourceTree = "<group>";
@@ -139,14 +189,14 @@
 			name = view;
 			sourceTree = "<group>";
 		};
-		D59754F31F98E8AE001BBE8B /* controller */ = {
+		D59754F31F98E8AE001BBE8B /* controllers */ = {
 			isa = PBXGroup;
 			children = (
-				D59754E01F98D340001BBE8B /* HomeController.swift */,
-				D59755061F9ECE2A001BBE8B /* SignInController.swift */,
-				D5F017FC1FA3B4A100A2EFA3 /* AddCategoryController.swift */,
+				D58989641FBFA997005EAAF3 /* AddCategory */,
+				D58989631FBFA990005EAAF3 /* Home */,
+				D59399381FAF628700434703 /* MonthReport */,
 			);
-			name = controller;
+			name = controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -277,15 +327,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D589895C1FAF64E5005EAAF3 /* MonthReportCell.swift in Sources */,
 				D59754E11F98D340001BBE8B /* HomeController.swift in Sources */,
 				D59755031F9E87C6001BBE8B /* CustomImageView.swift in Sources */,
+				D58989681FBFAA09005EAAF3 /* LibraryAPI.swift in Sources */,
+				D589895E1FAFC2D4005EAAF3 /* MonthReportDetailsController.swift in Sources */,
 				D59755051F9E8946001BBE8B /* CustomButton.swift in Sources */,
-				D59755071F9ECE2A001BBE8B /* SignInController.swift in Sources */,
 				D59754FD1F9BE3A4001BBE8B /* Colors.swift in Sources */,
 				D59754F91F9A3EC2001BBE8B /* HeaderCell.swift in Sources */,
+				D58989601FAFCC38005EAAF3 /* Bill.swift in Sources */,
+				D589896A1FBFB262005EAAF3 /* PersistencyManager.swift in Sources */,
 				D55D4B3F1FA4B9E9008A034D /* CategoryHeaderCell.swift in Sources */,
 				D59754DF1F98D340001BBE8B /* AppDelegate.swift in Sources */,
+				D58989621FAFD59D005EAAF3 /* BillCell.swift in Sources */,
 				D59754F51F98E943001BBE8B /* Extensions.swift in Sources */,
+				D59399371FAF55A300434703 /* MonthReportController.swift in Sources */,
 				D59754F71F9A32DE001BBE8B /* CategoryCell.swift in Sources */,
 				D59755011F9E3E0D001BBE8B /* Category.swift in Sources */,
 				D5F017FD1FA3B4A100A2EFA3 /* AddCategoryController.swift in Sources */,

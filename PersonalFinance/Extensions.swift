@@ -17,6 +17,27 @@
 import UIKit
 import FirebaseDatabase
 
+extension Date {
+    var millisecondsSince1970:Int {
+        return Int((self.timeIntervalSince1970 * 1000.0).rounded())
+    }
+    
+    init(milliseconds:Int) {
+        self = Date(timeIntervalSince1970: TimeInterval(milliseconds / 1000))
+    }
+
+        func startOfMonth() -> Date {
+            return Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day], from: Calendar.current.startOfDay(for: self)))!
+        }
+        
+        func endOfMonth() -> Date {
+            return Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: self.startOfMonth())!
+        }
+    
+    
+}
+
+
 extension UIScrollView {
     /// Sets content offset to the top.
     func resetScrollPositionToTop() {
@@ -276,6 +297,48 @@ extension FIRDatabase {
         }) {(err) in
             print("Failed to fetch the categories with UID", err)
         }
+    }
+    
+    static func fetchBillsWithUID(uid: String, completion: @escaping ([Bill]) -> ()){
+        FIRDatabase.database().reference().child("bills").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            print(snapshot)
+            
+            guard let allBills = snapshot.value as? [String: Any] else {return}
+            var bills = [Bill]()
+            
+            allBills.forEach({  (key, value) in
+                let bill = Bill(id: key, dictionary: value as! [String : Any])
+                bills.append(bill)
+            })
+            
+            completion(bills)
+            
+        }) {(err) in
+            print("Failed to fetch the bills with UID", err)
+        }
+    }
+    
+    static func fetchBills(with uid: String, from: Date, to: Date, completion: @escaping ([Bill]) -> ()){
+        let ref = FIRDatabase.database().reference().child("bills").child(uid)
+        let query = ref.queryOrdered(byChild: "creationDate").queryStarting(atValue: from.timeIntervalSince1970).queryEnding(atValue: to.timeIntervalSince1970)
+        
+        query.observeSingleEvent(of: .value, with: { (snapshot) in
+            print(snapshot)
+            
+            guard let allBills = snapshot.value as? [String : Any] else {return}
+            var bills = [Bill]()
+            
+            allBills.forEach({ (key, value) in
+                let bill = Bill(id: key, dictionary: value as! [String:Any])
+                bills.append(bill)
+            })
+            
+            completion(bills)
+        }) { (err) in
+            print("Failed to fetch bills: ", err)
+        }
+        
     }
     
 //    static func fetchFollowedUsersWithUID(uid: String, completion: @escaping ([String: Int]) -> ()) {

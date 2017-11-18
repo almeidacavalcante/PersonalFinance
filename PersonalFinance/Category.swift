@@ -13,6 +13,7 @@ class Category: NSObject {
     let descriptionContent : String?
     let assetName : String?
     
+    
     init(descriptionContent: String, assetName: String) {
         self.id = ""
         self.descriptionContent = descriptionContent

@@ -44,6 +44,8 @@ extension UIColor {
             scheme.append(UIColor(rgb: 0xEAF260)) // [10] Icterine
             scheme.append(UIColor(rgb: 0x2CCD98)) // [11] Mountain Meadow (greenish)
             scheme.append(UIColor(rgb: 0x026976)) // [12] Skobeloff (dark blue)
+            scheme.append(UIColor(rgb: 0x540B0E)) // [13] Red-brown
+            
             scheme.append(UIColor.rgb(red: 250, green: 240, blue: 214))
             scheme.append(UIColor.rgb(red: 231, green: 80, blue: 38))
             return scheme

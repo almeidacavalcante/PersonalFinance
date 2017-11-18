@@ -48,10 +48,10 @@ class MonthReportController: UICollectionViewController, UICollectionViewDelegat
     }
 
     func fetchMonths(){
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else {return}
+        guard let uid = DefaultUser.currentUser.uid else {return}
         
-        FIRDatabase.fetchBillsWithUID(uid: uid) { (billsReturn) in
-            billsReturn.forEach({ (bill) in
+        LibraryAPI.sharedInstance.fetchBills(with: uid) { (returnedBills) in
+            returnedBills.forEach({ (bill) in
                 self.addMonth(month: self.currentTime(date: bill.date))
             })
             self.doTranslateMonths()

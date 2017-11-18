@@ -15,12 +15,20 @@ final class LibraryAPI {
     let persistencyInstance = PersistencyManager.sharedInstance
     
     func fetchCategories(completion: @escaping ([Category]) -> ()){
-        let c = PersistencyManager()
-        if CFEqual(c as CFTypeRef!, persistencyInstance as CFTypeRef!) {
-            print("THEY ARE EQUAL")
-        }
-        self.persistencyInstance.fetchCategories { (categories) in
+        persistencyInstance.fetchCategories { (categories) in
             completion(categories)
+        }
+    }
+    
+    func fetchBills(startingDate: Date, endingDate: Date, completion: @escaping ([Bill]) -> ()){
+        persistencyInstance.fetchBills(startingDate: startingDate, endingDate: endingDate) { (bills) in
+            completion(bills)
+        }
+    }
+    
+    func fetchBills(with uid: String, completion: @escaping ([Bill]) -> ()){
+        persistencyInstance.fetchBills(with: uid) { (bills) in
+            completion(bills)
         }
     }
     

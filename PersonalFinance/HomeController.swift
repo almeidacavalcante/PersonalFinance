@@ -598,6 +598,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "calendar7-").template(), for: .normal)
         button.tintColor = UIColor.currentColorScheme[3]
+        button.addTarget(self, action: #selector(handleBillsController), for: .touchUpInside)
         return button
     }()
     let calendarMonthButton : UIButton = {
@@ -607,6 +608,12 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         button.addTarget(self, action: #selector(handleOpenMonthReport), for: .touchUpInside)
         return button
     }()
+    
+    func handleBillsController(){
+        let controller = BillsController()
+        controller.homeControllerRef = self
+        navigationController?.pushViewController(controller, animated: true)
+    }
     
     func handleOpenMonthReport(){
         guard let controller = monthReportController else {

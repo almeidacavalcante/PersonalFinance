@@ -16,6 +16,9 @@
 		D58989681FBFAA09005EAAF3 /* LibraryAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58989671FBFAA09005EAAF3 /* LibraryAPI.swift */; };
 		D589896A1FBFB262005EAAF3 /* PersistencyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58989691FBFB262005EAAF3 /* PersistencyManager.swift */; };
 		D589896C1FC08AC7005EAAF3 /* DefaultUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D589896B1FC08AC6005EAAF3 /* DefaultUser.swift */; };
+		D58989701FC0D1BF005EAAF3 /* CustomCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D589896F1FC0D1BF005EAAF3 /* CustomCollectionViewCell.swift */; };
+		D58989731FC106DE005EAAF3 /* BillsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58989721FC106DE005EAAF3 /* BillsController.swift */; };
+		D58989751FC10B51005EAAF3 /* BillTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58989741FC10B51005EAAF3 /* BillTableViewCell.swift */; };
 		D59399371FAF55A300434703 /* MonthReportController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59399361FAF55A300434703 /* MonthReportController.swift */; };
 		D59754DF1F98D340001BBE8B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59754DE1F98D340001BBE8B /* AppDelegate.swift */; };
 		D59754E11F98D340001BBE8B /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59754E01F98D340001BBE8B /* HomeController.swift */; };
@@ -42,6 +45,9 @@
 		D58989671FBFAA09005EAAF3 /* LibraryAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryAPI.swift; sourceTree = "<group>"; };
 		D58989691FBFB262005EAAF3 /* PersistencyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistencyManager.swift; sourceTree = "<group>"; };
 		D589896B1FC08AC6005EAAF3 /* DefaultUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DefaultUser.swift; path = ../DefaultUser.swift; sourceTree = "<group>"; };
+		D589896F1FC0D1BF005EAAF3 /* CustomCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCollectionViewCell.swift; sourceTree = "<group>"; };
+		D58989721FC106DE005EAAF3 /* BillsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BillsController.swift; sourceTree = "<group>"; };
+		D58989741FC10B51005EAAF3 /* BillTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BillTableViewCell.swift; sourceTree = "<group>"; };
 		D59399361FAF55A300434703 /* MonthReportController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonthReportController.swift; sourceTree = "<group>"; };
 		D59754DB1F98D340001BBE8B /* PersonalFinance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PersonalFinance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D59754DE1F98D340001BBE8B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -116,9 +122,27 @@
 			name = LibraryAPI;
 			sourceTree = "<group>";
 		};
+		D589896D1FC0D1A9005EAAF3 /* CustomCell */ = {
+			isa = PBXGroup;
+			children = (
+				D589896F1FC0D1BF005EAAF3 /* CustomCollectionViewCell.swift */,
+			);
+			name = CustomCell;
+			sourceTree = "<group>";
+		};
+		D58989711FC106C6005EAAF3 /* MonthReportTable */ = {
+			isa = PBXGroup;
+			children = (
+				D58989721FC106DE005EAAF3 /* BillsController.swift */,
+				D58989741FC10B51005EAAF3 /* BillTableViewCell.swift */,
+			);
+			name = MonthReportTable;
+			sourceTree = "<group>";
+		};
 		D59399381FAF628700434703 /* MonthReport */ = {
 			isa = PBXGroup;
 			children = (
+				D589896D1FC0D1A9005EAAF3 /* CustomCell */,
 				D59399361FAF55A300434703 /* MonthReportController.swift */,
 				D589895B1FAF64E5005EAAF3 /* MonthReportCell.swift */,
 				D589895D1FAFC2D4005EAAF3 /* MonthReportDetailsController.swift */,
@@ -195,6 +219,7 @@
 		D59754F31F98E8AE001BBE8B /* controllers */ = {
 			isa = PBXGroup;
 			children = (
+				D58989711FC106C6005EAAF3 /* MonthReportTable */,
 				D58989641FBFA997005EAAF3 /* AddCategory */,
 				D58989631FBFA990005EAAF3 /* Home */,
 				D59399381FAF628700434703 /* MonthReport */,
@@ -334,13 +359,16 @@
 				D59754E11F98D340001BBE8B /* HomeController.swift in Sources */,
 				D59755031F9E87C6001BBE8B /* CustomImageView.swift in Sources */,
 				D589896C1FC08AC7005EAAF3 /* DefaultUser.swift in Sources */,
+				D58989751FC10B51005EAAF3 /* BillTableViewCell.swift in Sources */,
 				D58989681FBFAA09005EAAF3 /* LibraryAPI.swift in Sources */,
 				D589895E1FAFC2D4005EAAF3 /* MonthReportDetailsController.swift in Sources */,
+				D58989731FC106DE005EAAF3 /* BillsController.swift in Sources */,
 				D59755051F9E8946001BBE8B /* CustomButton.swift in Sources */,
 				D59754FD1F9BE3A4001BBE8B /* Colors.swift in Sources */,
 				D59754F91F9A3EC2001BBE8B /* HeaderCell.swift in Sources */,
 				D58989601FAFCC38005EAAF3 /* Bill.swift in Sources */,
 				D589896A1FBFB262005EAAF3 /* PersistencyManager.swift in Sources */,
+				D58989701FC0D1BF005EAAF3 /* CustomCollectionViewCell.swift in Sources */,
 				D55D4B3F1FA4B9E9008A034D /* CategoryHeaderCell.swift in Sources */,
 				D59754DF1F98D340001BBE8B /* AppDelegate.swift in Sources */,
 				D58989621FAFD59D005EAAF3 /* BillCell.swift in Sources */,

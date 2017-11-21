@@ -27,6 +27,7 @@ class MonthReportDetailsController: UICollectionViewController, UICollectionView
     var bills : [Bill]?
     
     override func viewDidLoad() {
+        
         collectionView?.alwaysBounceVertical = true
 
         self.setupRefreshControl()
@@ -38,7 +39,6 @@ class MonthReportDetailsController: UICollectionViewController, UICollectionView
         collectionView?.register(BillCell.self, forCellWithReuseIdentifier: cellId)
         
         navigationItem.title = monthLabel.text
-
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

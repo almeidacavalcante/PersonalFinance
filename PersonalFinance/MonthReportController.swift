@@ -20,6 +20,7 @@ class MonthReportController: UICollectionViewController, UICollectionViewDelegat
     var homeControllerRef : HomeController?
     
     var monthReportDetailsController : MonthReportDetailsController?
+    var billsController : BillsController?
     var months : [String] = []
         
     override func viewDidLoad() {
@@ -94,16 +95,29 @@ class MonthReportController: UICollectionViewController, UICollectionViewDelegat
     
     
     //MARK: It`s creating a new instance every time it loads!
+//    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        print(indexPath.item)
+//
+//            let layout = UICollectionViewFlowLayout()
+//            self.monthReportDetailsController = MonthReportDetailsController(collectionViewLayout: layout)
+//            self.monthReportDetailsController?.homeControllerRef = self.homeControllerRef
+//            self.monthReportDetailsController?.monthNumber = String(m[indexPath.item])
+//            self.monthReportDetailsController?.monthLabel.text = months[indexPath.item]
+//            navigationController?.pushViewController(self.monthReportDetailsController!, animated: true)
+//
+//    }
+    
+    //MARK: It`s creating a new instance every time it loads!
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print(indexPath.item)
-
-            let layout = UICollectionViewFlowLayout()
-            self.monthReportDetailsController = MonthReportDetailsController(collectionViewLayout: layout)
-            self.monthReportDetailsController?.homeControllerRef = self.homeControllerRef
-            self.monthReportDetailsController?.monthNumber = String(m[indexPath.item])
-            self.monthReportDetailsController?.monthLabel.text = months[indexPath.item]
-            navigationController?.pushViewController(self.monthReportDetailsController!, animated: true)
-
+        
+//        let layout = UICollectionViewFlowLayout()
+        self.billsController = BillsController()
+        self.billsController?.homeControllerRef = self.homeControllerRef
+        self.billsController?.monthNumber = String(m[indexPath.item])
+        self.billsController?.monthLabel.text = months[indexPath.item]
+        navigationController?.pushViewController(self.billsController!, animated: true)
+        
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

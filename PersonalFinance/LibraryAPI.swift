@@ -32,5 +32,11 @@ final class LibraryAPI {
         }
     }
     
+    func removeBill(with id: String, completion: @escaping ()->()){
+        persistencyInstance.removeBill(with: id) {
+            completion()
+        }
+    }
+    
 }
 

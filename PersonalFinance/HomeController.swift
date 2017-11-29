@@ -581,6 +581,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
     }
     
+    //MARK: MENU
     let addCategoryButton : UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "add2").template(), for: .normal)

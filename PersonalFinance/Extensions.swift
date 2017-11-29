@@ -341,20 +341,14 @@ extension FIRDatabase {
         
     }
     
-//    static func fetchFollowedUsersWithUID(uid: String, completion: @escaping ([String: Int]) -> ()) {
-//        FIRDatabase.database().reference().child("following").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-//            
-//            
-//            guard let usersUIDs = snapshot.value as? [String: Int] else {
-//                //                print("nil snapshot from Firebase: ", snapshot)
-//                return
-//            }
-//            
-//            completion(usersUIDs)
-//            
-//        }) { (err) in
-//            print("Failed to fetch followed users")
-//        }
-//    }    
+    static func removeBill(with id: String, completion: @escaping () -> ()){
+        guard let uid = DefaultUser.currentUser.uid else {return}
+        let ref = FIRDatabase.database().reference().child("bills").child(uid).child(id)
+        ref.removeValue { (err, _) in
+            print(err)
+        }
+        completion()
+    }
+  
 }
 

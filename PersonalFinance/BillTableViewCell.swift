@@ -48,6 +48,15 @@ class BillTableViewCell: UITableViewCell {
         self.categoryImageView.anchor(top: topAnchor, left: leftAnchor, botton: nil, right: nil, paddingTop: 12.5, paddingLeft: 16, paddingBottom: 0, paddingRight: 0, width: 20, height: 20)
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        selectionStyle = .none
+        contentView.frame = UIEdgeInsetsInsetRect(contentView.frame, UIEdgeInsetsMake(0, 0, 1, 0))
+        contentView.backgroundColor = UIColor.currentColorScheme[1]
+
+    }
+    
     func setupBill(){
         valueLabel.text = "$" + (bill?.value.description)!
         noteLabel.text = bill?.note

@@ -37,5 +37,11 @@ final class PersistencyManager {
             completion(bills)
         }
     }
+    
+    func removeBill(with id: String, completion: @escaping () -> ()){
+        FIRDatabase.removeBill(with: id) {
+            completion()
+        }
+    }
 }
 

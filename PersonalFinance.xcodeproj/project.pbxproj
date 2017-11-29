@@ -115,8 +115,8 @@
 		D58989651FBFA9B1005EAAF3 /* LibraryAPI */ = {
 			isa = PBXGroup;
 			children = (
-				D589896B1FC08AC6005EAAF3 /* DefaultUser.swift */,
 				D58989671FBFAA09005EAAF3 /* LibraryAPI.swift */,
+				D589896B1FC08AC6005EAAF3 /* DefaultUser.swift */,
 				D58989691FBFB262005EAAF3 /* PersistencyManager.swift */,
 			);
 			name = LibraryAPI;

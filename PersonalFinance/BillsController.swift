@@ -19,6 +19,15 @@ class BillsController: UITableViewController {
     
     var homeControllerRef : HomeController?
     
+    var monthNumber : String?
+    
+    var monthLabel : UILabel = {
+        let label = UILabel()
+        return label
+    }()
+    
+    var m = [Int]()
+    
     override func viewDidLoad() {
         self.fetchBills()
         view.backgroundColor = UIColor.currentColorScheme[2]
@@ -32,10 +41,18 @@ class BillsController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if (editingStyle == UITableViewCellEditingStyle.delete) {
-            // handle delete (by removing the data from your array and updating the tableview)
+            
+            guard let billId = self.bills[indexPath.item].id else {return}
+            LibraryAPI.sharedInstance.removeBill(with: billId, completion: { 
+                print("Bill removed with success: ", billId.description)
+                self.bills.remove(at: indexPath.item)
+                self.tableView.reloadData()
+            })
+            
         }
     }
     
+
     
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -46,13 +63,21 @@ class BillsController: UITableViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! BillTableViewCell
         
-        cell.backgroundColor = UIColor.currentColorScheme[1]
+        cell.backgroundColor = UIColor.currentColorScheme[2]
         if self.bills.count > 0 {
             cell.assetName = findAssetName(withId: (self.bills[indexPath.item].categoryId)!)
             cell.bill = self.bills[indexPath.item]
         }
         
         return cell
+    }
+    
+    
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //Just add this below line didSelectRowAt
+        tableView.deselectRow(at: indexPath, animated: true)
+        
     }
     
     func findAssetName(withId: String) -> String{

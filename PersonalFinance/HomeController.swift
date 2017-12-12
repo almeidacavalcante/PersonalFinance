@@ -12,8 +12,16 @@ import FirebaseAuth
 import FirebaseDatabase
 import FirebaseStorage
 
+class MyButton: UIButton {
 
+    override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        let relativeFrame = self.bounds
+        let hitTestEdgeInsets = UIEdgeInsetsMake(-25, -25, -25, -25)
+        let hitFrame = UIEdgeInsetsInsetRect(relativeFrame, hitTestEdgeInsets)
+        return hitFrame.contains(point)
+    }
 
+}
 
 class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UITextFieldDelegate, HeaderCellDelegate, CategoryCellDelegate {
     
@@ -199,6 +207,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     let infoButton : UIButton = {
         let button = UIButton(type: .system)
+        button.contentEdgeInsets = UIEdgeInsetsMake(15, 15, 15, 15)
+//        button.backgroundColor = .black
         button.addTarget(self, action: #selector(handleInfo), for: .touchUpInside)
         return button
     }()
@@ -476,14 +486,20 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         ref.updateChildValues(values)
     }
     
-    
+    func stringToPlainDouble(rawValue: String) -> Double{
+        let regex = try! NSRegularExpression(pattern: "[^0-9]", options: .caseInsensitive)
+        let cleanValue = regex.stringByReplacingMatches(in: rawValue, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, rawValue.count), withTemplate: "")
+        let double = Double(cleanValue)
+        let value = double! / 100
+        return value
+    }
     
     fileprivate func saveTheBill(){
-        var rawValue = header?.currencyField.text
-        rawValue?.remove(at: (rawValue?.startIndex)!)
+        guard let rawValue = header?.currencyField.text else {return}
+
+        let value = stringToPlainDouble(rawValue: rawValue)
         
-        guard let value = Double(rawValue!) else {return}
-        
+        //MARK: - Use the Adapter (Couping code)
         guard let uid = FIRAuth.auth()?.currentUser?.uid else {return}
         
         guard let category = selectedCategoryCell?.category else {return}
@@ -506,26 +522,27 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
     
-    //MARK: NAVIGATION BAR ITEMS
-//    lazy var addCategoryBarButton : UIBarButtonItem = {
-//            let barButton = UIBarButtonItem(image: #imageLiteral(resourceName: "plus").template(), style: .plain, target: self, action: #selector(handleAddCategory))
-//        
-//        return barButton
-//    }()
-    
     lazy var openMenuBarButton : UIBarButtonItem = {
         let barButton = UIBarButtonItem()
         
         let icon = UIImage(named: "menu")?.template()
-        let iconWidth = icon?.size.width
-        let iconSize = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: iconWidth!, height: iconWidth!))
         
-        let iconButton = UIButton(frame: iconSize)
+        guard let iconWidth = icon?.size.width else {return barButton}
+            
+        let iconSize = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: iconWidth, height: iconWidth))
+        
+        let size = CGRect(x: 0, y: 0, width: 50, height: 50)
+        
+        let iconButton = UIButton()
+            
         iconButton.addTarget(self, action: #selector(handleManu), for: .touchUpInside)
-        iconButton.setBackgroundImage(icon, for: .normal)
-        
+        iconButton.frame = size
+        iconButton.imageView?.frame = iconSize
+        iconButton.setImage(icon, for: .normal)
+        iconButton.imageEdgeInsets = UIEdgeInsetsMake(0, -15, 0, 0)
+ 
         barButton.customView = iconButton
-        
+    
         return barButton
     }()
     
@@ -743,24 +760,33 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     func animateMenuIconIn(){
         //openMenuBarButton
+        
+    
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.33, initialSpringVelocity: 10, options: .curveEaseInOut, animations: {
-            
+        
             self.openMenuBarButton.customView?.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-            
+            let button = self.openMenuBarButton.customView as! UIButton
+            button.contentEdgeInsets = UIEdgeInsetsMake(0, 15, 0, 0)
+            self.openMenuBarButton.customView = button
             self.openMenuBarButton.customView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi/2)
-
         })
+        self.openMenuBarButton.customView?.layoutIfNeeded()
     }
     
     func animateMenuIconOut(){
         //openMenuBarButton
-        UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.33, initialSpringVelocity: 10, options: .curveEaseInOut, animations: {
-            self.openMenuBarButton.customView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi/2)
-            self.openMenuBarButton.customView?.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
 
-            
-        })
+        let button = self.openMenuBarButton.customView as! UIButton
+        button.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 0)
+        self.openMenuBarButton.customView = button
+        self.openMenuBarButton.customView?.layoutIfNeeded()
         
+        UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.33, initialSpringVelocity: 10, options: .curveEaseInOut, animations: {
+            
+            self.openMenuBarButton.customView?.transform = CGAffineTransform(rotationAngle: CGFloat.pi/2)
+
+            self.openMenuBarButton.customView?.transform = CGAffineTransform(scaleX: 1, y: 1)
+        })
     }
     
     

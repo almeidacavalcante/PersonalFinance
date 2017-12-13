@@ -500,7 +500,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         let value = stringToPlainDouble(rawValue: rawValue)
         
         //MARK: - Use the Adapter (Couping code)
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else {return}
+        guard let uid = DefaultUser.currentUser.uid else {return}
         
         guard let category = selectedCategoryCell?.category else {return}
         guard let categoryId = category.id else {return}
@@ -634,13 +634,18 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     func handleOpenMonthReport(){
-        guard let controller = monthReportController else {
-            let layout = UICollectionViewFlowLayout()
-            self.monthReportController = MonthReportController(collectionViewLayout: layout)
-            self.monthReportController?.homeControllerRef = self
-            navigationController?.pushViewController(self.monthReportController!, animated: true)
-            return
-        }
+//        guard let controller = monthReportController else {
+//            let layout = UICollectionViewFlowLayout()
+//            self.monthReportController = MonthReportController(collectionViewLayout: layout)
+//            self.monthReportController?.homeControllerRef = self
+//            navigationController?.pushViewController(self.monthReportController!, animated: true)
+//            return
+//        }
+        
+        let layout = UICollectionViewFlowLayout()
+        let controller = MonthReportController(collectionViewLayout: layout)
+        controller.homeControllerRef = self
+        
         navigationController?.pushViewController(controller, animated: true)
     }
     

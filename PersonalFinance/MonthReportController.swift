@@ -94,7 +94,7 @@ class MonthReportController: UICollectionViewController, UICollectionViewDelegat
     }
     
     
-    //MARK: It`s creating a new instance every time it loads!
+
 //    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 //        print(indexPath.item)
 //
@@ -107,11 +107,10 @@ class MonthReportController: UICollectionViewController, UICollectionViewDelegat
 //
 //    }
     
-    //MARK: It`s creating a new instance every time it loads!
+    //MARK: (ERROR) It`s creating a new instance every time it loads!
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print(indexPath.item)
         
-//        let layout = UICollectionViewFlowLayout()
         self.billsController = BillsController()
         self.billsController?.homeControllerRef = self.homeControllerRef
         self.billsController?.monthNumber = String(m[indexPath.item])

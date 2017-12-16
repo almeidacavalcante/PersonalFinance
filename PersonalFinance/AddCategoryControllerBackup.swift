@@ -14,7 +14,7 @@ import FirebaseAuth
 import FirebaseDatabase
 import FirebaseStorage
 
-class AddCategoryController: UICollectionViewController, UICollectionViewDelegateFlowLayout, CategoryCellDelegate {
+class AddCategoryControllerBkp: UICollectionViewController, UICollectionViewDelegateFlowLayout, CategoryCellDelegate {
     
     var homeControllerRef : HomeController?
     let moreOverlay : UIView = {
@@ -22,7 +22,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         v.backgroundColor = UIColor.currentColorScheme[0]
         return v
     }()
-
+    
     let cellId = "cellId"
     let headerId = "headerId"
     
@@ -45,36 +45,47 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     
     
     
-    var availableIcons : [(key: String, value: Int)] = [
-        ("bandage", 1),
-        ("comment", 1),
-        ("gas", 0),
-        ("doc", 1),
-        ("health", 0),
-        ("home", 1),
-        ("info", 0),
-        ("lamp", 0),
-        ("note", 0),
-        ("plus", 0),
-        ("task", 0),
-        ("toast", 0),
-        ("love", 0),
-        ("dollar", 0),
-        ("dollar2", 0),
-        ("hugby", 0),
-        ("hugby2", 0),
-        ("bus", 0),
-        ("phone", 0),
-        ("cam", 0),
-        ("book", 0),
-        ("books2", 0),
-        ("books", 0),
-        ("auction", 0)
+    var availableIcons = [
+        ["bandage": 1],
+        ["comment": 1],
+        ["gas": 0],
+        ["doc": 1],
+        ["health": 0],
+        ["home": 1],
+        ["info": 0],
+        ["lamp": 0],
+        ["note": 0],
+        ["plus": 0],
+        ["task": 0],
+        ["toast": 0],
+        ["love": 0],
+        ["dollar": 0],
+        ["dollar2": 0],
+        ["hugby": 0],
+        ["hugby2": 0],
+        ["bus": 0],
+        ["phone": 0],
+        ["cam": 0],
+        ["book": 0],
+        ["books2": 0],
+        ["books": 0],
+        ["auction": 0]
     ]
     
-
+    var availableIcons2 : [(key: String, value: Int)] = [
+        ("bandage", 0),
+        ("comment", 1),
+        ("gas", 0),
+        ("doc", 1)
+    ]
+    
+    
     
     override func viewDidLoad() {
+        
+        
+        
+        
         view.backgroundColor = UIColor.currentColorScheme[2]
         collectionView?.keyboardDismissMode = .interactive
         self.hideKeyboardWhenTappedAround()
@@ -155,7 +166,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     func doneButtonAction() {
         self.view.endEditing(true)
     }
-
+    
     let gradientView : UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.currentColorScheme[2]
@@ -171,7 +182,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         
         view.addSubview(gradientView)
         gradientView.anchor(top: nil, left: collectionView?.leftAnchor, botton: collectionView?.bottomAnchor, right: collectionView?.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 100)
-   
+        
         collectionView?.backgroundColor = UIColor.currentColorScheme[0]
         collectionView?.anchor(top: view.topAnchor, left: view.leftAnchor, botton: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 100, paddingRight: 0, width: 0, height: 0)
         
@@ -184,6 +195,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     var centerYConstraint : NSLayoutConstraint?
     
     func setupArrow(){
+        
         arrow = UIImageView(image: #imageLiteral(resourceName: "arrow").withRenderingMode(.alwaysTemplate))
         arrow?.tintColor = UIColor.currentColorScheme[3]
         view.addSubview(arrow!)
@@ -195,7 +207,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         
         view.addConstraint(centerXConstraint!)
         view.addConstraint(centerYConstraint!)
-
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -214,14 +226,14 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         
         
         gradientMask.frame = targetView.bounds
-
+        
         gradientMask.colors = [UIColor.clear.cgColor, UIColor.lightYellow2.cgColor]
         gradientMask.locations = [0.0, 1.0]
         
         let maskView: UIView = UIView()
         maskView.layer.addSublayer(gradientMask)
         
-        targetView.mask = maskView 
+        targetView.mask = maskView
     }
     
     //MARK: Scroll behaviour.
@@ -232,7 +244,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
             let contentHeight = scrollView.contentSize.height
             
             let triggerOffset = contentHeight - collectionViewHeigh!
-
+            
             if(contentOffset >= triggerOffset){
                 if(!(gradientView.alpha == 0)){
                     dismissGradientOverlay()
@@ -247,7 +259,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     }
     
     override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-
+        
     }
     
     
@@ -274,7 +286,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     func showGradientOverlay(){
         self.isAlowedToAnimate = true
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseOut, animations: {
-
+            
             self.startArrowStandardAnimation()
             self.gradientView.alpha = 1
             self.arrow?.alpha = 1
@@ -282,7 +294,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
             self.view.layoutIfNeeded()
         }) { (true) in
             print("ARROW IN!")
-//            self.startArrowStandardAnimation()
+            //            self.startArrowStandardAnimation()
         }
     }
     
@@ -331,9 +343,9 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return availableIcons.count
     }
-
+    
     fileprivate func setupSelectableCategory(_ indexPath: IndexPath, _ cell: CategoryCell) {
-        let category = Category(descriptionContent: "", assetName: availableIcons[indexPath.item].key)
+        let category = Category(descriptionContent: "", assetName: (availableIcons[indexPath.item].first?.key)!)
         
         cell.category = category
         cell.button.setImage(UIImage(named: category.assetName!)?.template(), for: .normal)
@@ -347,29 +359,29 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     }
     
     fileprivate func setupUnselectableCategory(_ indexPath: IndexPath, _ cell: CategoryCell) {
-        let category = Category(descriptionContent: "", assetName: availableIcons[indexPath.item].key)
+        let category = Category(descriptionContent: "", assetName: (availableIcons[indexPath.item].first?.key)!)
         
         cell.category = category
         cell.button.setImage(UIImage(named: category.assetName!)?.template(), for: .normal)
-        cell.button.tintColor = UIColor.currentColorScheme[12]
-        cell.backgroundColor = UIColor.currentColorScheme[14]
+        cell.button.tintColor = UIColor.gray
+        cell.backgroundColor = .lightGray
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
+        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! CategoryCell
         
-
+        
         cell.delegate = self
         cell.indexPath = indexPath
         
         if cell.category?.assetName == nil {
             
-            if availableIcons[indexPath.item].value == 0 {
+            if availableIcons[indexPath.item].first?.value == 0 {
                 setupSelectableCategory(indexPath, cell)
                 return cell
             }
-            else if availableIcons[indexPath.item].value == 1 {
+            else if availableIcons[indexPath.item].first?.value == 1 {
                 setupUnselectableCategory(indexPath, cell)
                 return cell
             }
@@ -385,7 +397,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         if selectedIndexPath == indexPath{
             self.didDeselectCategory(cell: cell)
             selectedIndexPath = nil
-        }else if availableIcons[indexPath.item].value == 0{
+        }else if availableIcons[indexPath.item].first?.value == 0{
             self.didSelectCategory(cell: cell)
         }
     }
@@ -473,4 +485,5 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         return CGSize(width: view.frame.width, height: 100)
     }
 }
+
 

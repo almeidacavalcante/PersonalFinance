@@ -15,10 +15,12 @@ protocol CategoryCellDelegate {
 class CategoryCell: UICollectionViewCell {
     
     var delegate: CategoryCellDelegate?
+    var indexPath: IndexPath?
     
     lazy var button : CustomButton = {
         let button = CustomButton(type: .system)
         button.tintColor = UIColor.currentColorScheme[12]
+        button.isUserInteractionEnabled = false
         return button
     }()
     
@@ -43,10 +45,18 @@ class CategoryCell: UICollectionViewCell {
     
     func didSelectCategory(){
         delegate?.didSelectCategory(cell: self)
+
     }
+    
+    override func prepareForReuse() {
+        self.category = nil
+        self.resetColor()
+        self.button.tintColor = UIColor.currentColorScheme[12]
+    }
+    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
 }

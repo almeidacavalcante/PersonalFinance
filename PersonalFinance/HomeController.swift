@@ -623,7 +623,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "calendar30").template(), for: .normal)
         button.tintColor = UIColor.currentColorScheme[3]
-        button.addTarget(self, action: #selector(handleOpenMonthReport), for: .touchUpInside)
+//        button.addTarget(self, action: #selector(handleOpenMonthReport), for: .touchUpInside)
         return button
     }()
     
@@ -910,7 +910,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 10, options: .curveEaseInOut, animations: {
             self.selectedCategoryCell?.backgroundColor = UIColor.currentColorScheme[6]
         })
-        
     }
     
     fileprivate func resetCategoryCellColor(){
@@ -1009,11 +1008,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             
             self.blackView.removeFromSuperview()
             
-            
         }) { (_) in
             print("animated")
         }
-        
     }
 
     fileprivate func setupTitleLabelTransition(title: String){

@@ -349,6 +349,50 @@ extension FIRDatabase {
         }
         completion()
     }
+    
+    static func createAssetsOnDB(completion: @escaping ()->()){
+        guard let uid = DefaultUser.currentUser.uid else {return}
+        let ref = FIRDatabase.database().reference().child("assets").child(uid)
+        
+        var availableIcons : [(key: String, value: Int)] = [
+            ("bandage", 0),
+            ("comment", 0),
+            ("gas", 0),
+            ("doc", 0),
+            ("health", 0),
+            ("home", 0),
+            ("info", 0),
+            ("lamp", 0),
+            ("note", 0),
+            ("plus", 0),
+            ("task", 0),
+            ("toast", 0),
+            ("love", 0),
+            ("dollar", 0),
+            ("dollar2", 0),
+            ("hugby", 0),
+            ("hugby2", 0),
+            ("bus", 0),
+            ("phone", 0),
+            ("cam", 0),
+            ("book", 0),
+            ("books2", 0),
+            ("books", 0),
+            ("auction", 0)
+        ]
+        
+        availableIcons.forEach { (asset) in
+            let values = [
+                "assetName": asset.key,
+                "used": asset.value
+                ] as [String : Any]
+            
+            ref.childByAutoId().updateChildValues(values, withCompletionBlock: { (_, _) in
+                print("Successfully created a ASSET")
+            })
+        }
+ 
+    }
   
 }
 

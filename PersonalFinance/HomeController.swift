@@ -69,7 +69,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         super.viewDidLoad()
         
         collectionView?.keyboardDismissMode = .interactive
-        
+        FIRDatabase.createAssetsOnDB {
+            
+        }
         fetchCategories()
         
         
@@ -885,6 +887,12 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         cell.category = categories?[indexPath.item]
         
         cell.delegate = self
+        cell.indexPath = indexPath
+        
+        if selectedIndexPath == indexPath {
+            cell.didSelectCategory()
+        }
+        
         
         return cell
     }
@@ -901,10 +909,12 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     //MARK: DID SELECT CATEGORY
     
     var selectedCategoryCell : CategoryCell?
+    var selectedIndexPath : IndexPath?
     
     func didSelectCategory(cell: CategoryCell) {
         resetCategoryCellColor()
-        selectedCategoryCell = cell
+        self.selectedCategoryCell = cell
+        self.selectedIndexPath = cell.indexPath
         self.setupTitleLabelView()
         self.setupTitleLabelTransition(title: (selectedCategoryCell?.category?.descriptionContent)!)
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 10, options: .curveEaseInOut, animations: {
@@ -914,6 +924,27 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     fileprivate func resetCategoryCellColor(){
         guard let cell = selectedCategoryCell else {return}
+        cell.resetColor()
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let cell = collectionView.cellForItem(at: indexPath) as! CategoryCell
+        cell.indexPath = indexPath
+        
+        if selectedIndexPath == indexPath{
+            self.didDeselectCategory(cell: cell)
+            selectedIndexPath = nil
+        }else{
+            self.didSelectCategory(cell: cell)
+        }
+        
+    }
+    
+    func didDeselectCategory(cell: CategoryCell){
+        cell.indexPath = nil
+        self.selectedIndexPath = nil
+        self.selectedCategoryCell = nil
         cell.resetColor()
     }
     

@@ -37,6 +37,6 @@ final class LibraryAPI {
             completion()
         }
     }
-    
+
 }
 

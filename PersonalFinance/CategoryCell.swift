@@ -45,7 +45,6 @@ class CategoryCell: UICollectionViewCell {
     
     func didSelectCategory(){
         delegate?.didSelectCategory(cell: self)
-
     }
     
     override func prepareForReuse() {

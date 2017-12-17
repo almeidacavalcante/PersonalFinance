@@ -46,12 +46,12 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     
     
     var availableIcons : [(key: String, value: Int)] = [
-        ("bandage", 1),
-        ("comment", 1),
+        ("bandage", 0),
+        ("comment", 0),
         ("gas", 0),
-        ("doc", 1),
+        ("doc", 0),
         ("health", 0),
-        ("home", 1),
+        ("home", 0),
         ("info", 0),
         ("lamp", 0),
         ("note", 0),
@@ -75,6 +75,9 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
 
     
     override func viewDidLoad() {
+        
+  
+        
         view.backgroundColor = UIColor.currentColorScheme[2]
         collectionView?.keyboardDismissMode = .interactive
         self.hideKeyboardWhenTappedAround()
@@ -87,6 +90,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         setupTitleLabelTransition(title: "New Category")
         
     }
+    
     
     func handleInsertCategory(){
         self.insertCategory()
@@ -110,14 +114,14 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         let values = ["name": category.descriptionContent,
                       "assetName": category.assetName]
         
-        let assetValue = ["assetName": category.assetName]
-        
-        assetRef.updateChildValues(assetValue) { (err, ref) in
-            if let err = err {
-                print("Failed to save the asset name in DB:", err)
-            }
-            print("Successfully save the asset name in DB")
-        }
+//        let assetValue = ["assetName": category.assetName]
+//
+//        assetRef.updateChildValues(assetValue) { (err, ref) in
+//            if let err = err {
+//                print("Failed to save the asset name in DB:", err)
+//            }
+//            print("Successfully save the asset name in DB")
+//        }
         
         ref.updateChildValues(values) { (err, ref) in
             if let err = err {
@@ -404,7 +408,9 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     }
     
     func didDeselectCategory(cell: CategoryCell){
-        
+        cell.indexPath = nil
+        self.selectedIndexPath = nil
+        self.selectedCategoryCell = nil
         cell.resetColor()
     }
     

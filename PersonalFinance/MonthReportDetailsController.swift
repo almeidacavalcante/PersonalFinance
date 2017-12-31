@@ -67,7 +67,8 @@ class MonthReportDetailsController: UICollectionViewController, UICollectionView
         
         for category in (self.homeControllerRef?.categories)! {
             if category.id == withId{
-                return category.assetName!
+                guard let assetName = category.asset?.assetName else {return ""}
+                return assetName
             }
         }
         return ""

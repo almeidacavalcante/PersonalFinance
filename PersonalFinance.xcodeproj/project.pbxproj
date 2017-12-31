@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B5277D3E627332CD8696808D /* Pods_PersonalFinance.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8BABF7717E6F0B7996BF04E /* Pods_PersonalFinance.framework */; };
+		D547F4881FE7C52C001C25E3 /* Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = D547F4871FE7C52C001C25E3 /* Asset.swift */; };
 		D55D4B3F1FA4B9E9008A034D /* CategoryHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55D4B3E1FA4B9E9008A034D /* CategoryHeaderCell.swift */; };
 		D589895C1FAF64E5005EAAF3 /* MonthReportCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D589895B1FAF64E5005EAAF3 /* MonthReportCell.swift */; };
 		D589895E1FAFC2D4005EAAF3 /* MonthReportDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D589895D1FAFC2D4005EAAF3 /* MonthReportDetailsController.swift */; };
@@ -37,6 +38,7 @@
 /* Begin PBXFileReference section */
 		4E47D166CABD39F148E9B0FC /* Pods-PersonalFinance.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PersonalFinance.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PersonalFinance/Pods-PersonalFinance.debug.xcconfig"; sourceTree = "<group>"; };
 		C8BABF7717E6F0B7996BF04E /* Pods_PersonalFinance.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PersonalFinance.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D547F4871FE7C52C001C25E3 /* Asset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Asset.swift; sourceTree = "<group>"; };
 		D55D4B3E1FA4B9E9008A034D /* CategoryHeaderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryHeaderCell.swift; sourceTree = "<group>"; };
 		D589895B1FAF64E5005EAAF3 /* MonthReportCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonthReportCell.swift; sourceTree = "<group>"; };
 		D589895D1FAFC2D4005EAAF3 /* MonthReportDetailsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonthReportDetailsController.swift; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 			children = (
 				D59755001F9E3E0D001BBE8B /* Category.swift */,
 				D589895F1FAFCC38005EAAF3 /* Bill.swift */,
+				D547F4871FE7C52C001C25E3 /* Asset.swift */,
 			);
 			name = model;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 				D58989621FAFD59D005EAAF3 /* BillCell.swift in Sources */,
 				D59754F51F98E943001BBE8B /* Extensions.swift in Sources */,
 				D59399371FAF55A300434703 /* MonthReportController.swift in Sources */,
+				D547F4881FE7C52C001C25E3 /* Asset.swift in Sources */,
 				D59754F71F9A32DE001BBE8B /* CategoryCell.swift in Sources */,
 				D59755011F9E3E0D001BBE8B /* Category.swift in Sources */,
 				D5F017FD1FA3B4A100A2EFA3 /* AddCategoryController.swift in Sources */,

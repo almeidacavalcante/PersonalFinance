@@ -59,6 +59,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     //MODEL: Separate this in a model class
     var categories : [Category]?
+    var assets : [Asset]?
 
     
     let cellId = "cellId"
@@ -68,10 +69,12 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     override func viewDidLoad() {
         super.viewDidLoad()
         
+//        FIRDatabase.createAssetsOnDB {
+//
+//        }
+        
         collectionView?.keyboardDismissMode = .interactive
-        FIRDatabase.createAssetsOnDB {
-            
-        }
+
         fetchCategories()
         
         
@@ -91,12 +94,27 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         return .lightContent
     }
     
+    var tempCategories : [Category]? = []
+    
     func fetchCategories(){
-        LibraryAPI.sharedInstance.fetchCategories { (categories) in
-            self.categories = categories
-            
-            DispatchQueue.main.async {
-                self.collectionView?.reloadData()
+        
+        FIRDatabase.fetchAssets { (assets) in
+            self.assets = assets
+            LibraryAPI.sharedInstance.fetchCategories { (categories) in
+                self.categories?.removeAll()
+                self.tempCategories?.removeAll()
+                
+                categories.forEach({ (category) in
+                    if let asset = assets.first(where: {$0.id == category.assetId}) {
+                        category.asset = asset
+                        self.tempCategories?.append(category)
+                    }
+                })
+                self.categories = self.tempCategories
+                
+                DispatchQueue.main.async {
+                    self.collectionView?.reloadData()
+                }
             }
         }
     }
@@ -300,7 +318,10 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         self.infoOverlay.addSubview(self.closeButton)
         self.infoOverlay.addSubview(self.infoLabel)
         
-        self.closeButton.anchor(top: self.infoOverlay.topAnchor, left: nil, botton: nil, right: self.infoOverlay.rightAnchor, paddingTop: 15, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 20, height: 20)
+        self.closeButton.anchor(top: self.navigationController?.navigationBar.bottomAnchor, left: nil, botton: nil, right: self.infoOverlay.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 50, height: 50)
+        
+        self.closeButton.imageEdgeInsets = UIEdgeInsetsMake(15, 15, 15, 15)
+        
         self.infoLabel.anchor(top: self.infoOverlay.topAnchor, left: self.infoOverlay.leftAnchor, botton: self.infoOverlay.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 170, height: 0)
         
         closeButton.alpha = 0
@@ -860,10 +881,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         collectionView?.register(HeaderCell.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId)
         
         collectionView?.anchor(top: view.topAnchor, left: view.leftAnchor, botton: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 100, paddingRight: 0, width: 0, height: 0)
-        
-
-        
-        
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -881,7 +898,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! CategoryCell
         
-        let assetName = categories?[indexPath.item].assetName
+        
+        let assetName = categories?[indexPath.item].asset?.assetName
+        
         cell.button.setImage(UIImage(named: assetName!)?.template(), for: .normal)
         
         cell.category = categories?[indexPath.item]

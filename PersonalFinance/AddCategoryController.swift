@@ -43,40 +43,17 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     }()
     
     
-    
-    
-    var availableIcons : [(key: String, value: Int)] = [
-        ("bandage", 0),
-        ("comment", 0),
-        ("gas", 0),
-        ("doc", 0),
-        ("health", 0),
-        ("home", 0),
-        ("info", 0),
-        ("lamp", 0),
-        ("note", 0),
-        ("plus", 0),
-        ("task", 0),
-        ("toast", 0),
-        ("love", 0),
-        ("dollar", 0),
-        ("dollar2", 0),
-        ("hugby", 0),
-        ("hugby2", 0),
-        ("bus", 0),
-        ("phone", 0),
-        ("cam", 0),
-        ("book", 0),
-        ("books2", 0),
-        ("books", 0),
-        ("auction", 0)
-    ]
-    
+    var availableIcons:[Asset] = []
 
     
     override func viewDidLoad() {
         
-  
+        FIRDatabase.fetchAssets { (assetsArray) in
+            self.availableIcons = assetsArray
+            DispatchQueue.main.async {
+                self.collectionView?.reloadData()
+            }
+        }
         
         view.backgroundColor = UIColor.currentColorScheme[2]
         collectionView?.keyboardDismissMode = .interactive
@@ -99,29 +76,27 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     fileprivate func insertCategory(){
         
         guard let categoryName = header?.categoryNameTextField.text else {return}
-        guard let assetName = selectedCategoryCell?.category?.assetName else {return}
+        guard let asset = selectedCategoryCell?.category?.asset else {return}
         
-        let category = Category(descriptionContent: categoryName, assetName: assetName)
-        
+        let category = Category(descriptionContent: categoryName, asset: asset)
+
         guard let uid = DefaultUser.currentUser.uid else {return}
         
         let categoriesRef = FIRDatabase.database().reference().child("categories").child(uid)
-        let usedAssetsRef = FIRDatabase.database().reference().child("usedAssets").child(uid)
         
+        
+        guard let assetId = category.asset?.id else {return}
+        let usedAssetsRef = FIRDatabase.database().reference().child("assets").child(uid).child(assetId)
+        
+        guard let assetName = category.asset?.assetName else {return}
         let ref = categoriesRef.childByAutoId()
-        let assetRef = usedAssetsRef.childByAutoId()
         
         let values = ["name": category.descriptionContent,
-                      "assetName": category.assetName]
+                      "assetName": assetName,
+                      "assetId": assetId]
         
-//        let assetValue = ["assetName": category.assetName]
-//
-//        assetRef.updateChildValues(assetValue) { (err, ref) in
-//            if let err = err {
-//                print("Failed to save the asset name in DB:", err)
-//            }
-//            print("Successfully save the asset name in DB")
-//        }
+        usedAssetsRef.updateChildValues(["used": 1])
+        asset.used = 1
         
         ref.updateChildValues(values) { (err, ref) in
             if let err = err {
@@ -141,6 +116,11 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         collectionView?.resetScrollPositionToTop()
         collectionView?.reloadData()
         header?.categoryNameTextField.text = ""
+        selectedIndexPath = nil
+        selectedCategoryCell = nil
+        navigationController?.popViewController(animated: true)
+        homeControllerRef?.collectionView?.reloadData()
+        
     }
     
     func setupDoneButtonOnKeyboard(){
@@ -337,10 +317,12 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     }
 
     fileprivate func setupSelectableCategory(_ indexPath: IndexPath, _ cell: CategoryCell) {
-        let category = Category(descriptionContent: "", assetName: availableIcons[indexPath.item].key)
+        let asset = availableIcons[indexPath.item]
+        guard let assetName = asset.assetName else {return}
+        let category = Category(descriptionContent: "", asset: asset)
         
         cell.category = category
-        cell.button.setImage(UIImage(named: category.assetName!)?.template(), for: .normal)
+        cell.button.setImage(UIImage(named: assetName)?.template(), for: .normal)
         cell.button.tintColor = UIColor.currentColorScheme[12]
         
         if selectedIndexPath == indexPath {
@@ -351,10 +333,12 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
     }
     
     fileprivate func setupUnselectableCategory(_ indexPath: IndexPath, _ cell: CategoryCell) {
-        let category = Category(descriptionContent: "", assetName: availableIcons[indexPath.item].key)
+        let asset = availableIcons[indexPath.item]
+        let category = Category(descriptionContent: "", asset: asset)
         
+        guard let assetName = category.asset?.assetName else {return}
         cell.category = category
-        cell.button.setImage(UIImage(named: category.assetName!)?.template(), for: .normal)
+        cell.button.setImage(UIImage(named: assetName)?.template(), for: .normal)
         cell.button.tintColor = UIColor.currentColorScheme[12]
         cell.backgroundColor = UIColor.currentColorScheme[14]
     }
@@ -363,17 +347,16 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! CategoryCell
         
-
         cell.delegate = self
         cell.indexPath = indexPath
         
-        if cell.category?.assetName == nil {
+        if cell.category?.asset?.assetName == nil {
             
-            if availableIcons[indexPath.item].value == 0 {
+            if availableIcons[indexPath.item].used == 0 {
                 setupSelectableCategory(indexPath, cell)
                 return cell
             }
-            else if availableIcons[indexPath.item].value == 1 {
+            else if availableIcons[indexPath.item].used == 1 {
                 setupUnselectableCategory(indexPath, cell)
                 return cell
             }
@@ -389,7 +372,7 @@ class AddCategoryController: UICollectionViewController, UICollectionViewDelegat
         if selectedIndexPath == indexPath{
             self.didDeselectCategory(cell: cell)
             selectedIndexPath = nil
-        }else if availableIcons[indexPath.item].value == 0{
+        }else if availableIcons[indexPath.item].used == 0{
             self.didSelectCategory(cell: cell)
         }
     }

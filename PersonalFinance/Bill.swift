@@ -35,6 +35,18 @@ class Bill: NSObject {
         self.date = Date(milliseconds: Int(date))
     }
     
+    init(dictionary: [String : Any]) {
+        print("NO KEY! CHECK THIS OUT")
+        self.id = ""
+        self.note = dictionary["note"] as? String ?? ""
+        self.value = dictionary["value"] as? Double ?? 0.0
+        self.category = nil
+        self.categoryId = dictionary["categoryId"] as? String ?? ""
+        let date = dictionary["creationDate"] as! Double * 1000
+        
+        self.date = Date(milliseconds: Int(date))
+    }
+    
     
     
 }

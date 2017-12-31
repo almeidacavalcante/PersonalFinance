@@ -11,24 +11,33 @@ import Foundation
 class Category: NSObject {
     let id: String?
     let descriptionContent : String?
-    let assetName : String?
+    var assetId : String?
+    var asset : Asset?
     
-    
-    init(descriptionContent: String, assetName: String) {
+    init(descriptionContent: String, asset: Asset) {
         self.id = ""
         self.descriptionContent = descriptionContent
-        self.assetName = assetName
+        self.asset = asset
     }
     
     init(dictionary: [String: Any]) {
         self.id = ""
         self.descriptionContent = dictionary["description"] as? String ?? ""
-        self.assetName = dictionary["assetName"] as? String ?? ""
+
     }
     
     init(id: String, dictionary: [String: Any]) {
         self.id = id
         self.descriptionContent = dictionary["description"] as? String ?? ""
-        self.assetName = dictionary["assetName"] as? String ?? ""
+        self.assetId = dictionary["assetId"] as? String ?? ""
+    }
+    
+    init(id: String, assetId: String, dictionary: [String: Any]) {
+        self.id = id
+        self.descriptionContent = dictionary["description"] as? String ?? ""
+    }
+    
+    func setAsset(asset: Asset){
+        self.asset = asset
     }
 }

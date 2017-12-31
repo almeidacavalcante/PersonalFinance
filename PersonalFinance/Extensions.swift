@@ -16,6 +16,7 @@
 
 import UIKit
 import FirebaseDatabase
+import FirebaseAuth
 
 extension Date {
     var millisecondsSince1970:Int {
@@ -289,6 +290,7 @@ extension FIRDatabase {
             
             allCategories.forEach({  (key, value) in
                 let category = Category(id: key, dictionary: value as! [String : Any])
+
                 categories.append(category)
             })
             
@@ -299,25 +301,34 @@ extension FIRDatabase {
         }
     }
     
+
+    
     static func fetchBillsWithUID(uid: String, completion: @escaping ([Bill]) -> ()){
-        FIRDatabase.database().reference().child("bills").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+        FIRDatabase.database().reference().child("bills").child(uid).queryOrdered(byChild: "creationDate").observeSingleEvent(of: .value, with: { (snapshot) in
             
-            print(snapshot)
+            guard var allBills = snapshot.children.allObjects as? [FIRDataSnapshot] else {return}
+            allBills.reverse()
             
-            guard let allBills = snapshot.value as? [String: Any] else {return}
             var bills = [Bill]()
             
-            allBills.forEach({  (key, value) in
-                let bill = Bill(id: key, dictionary: value as! [String : Any])
+            allBills.forEach({  (snapshot) in
+                
+                guard let dictionary = snapshot.value as? [String: Any] else {return}
+                guard let id = snapshot.key as? String else {return}
+                
+                let bill = Bill(id: id, dictionary: dictionary)
+                
+                
                 bills.append(bill)
             })
-            
+
             completion(bills)
             
         }) {(err) in
             print("Failed to fetch the bills with UID", err)
         }
     }
+    
     
     static func fetchBills(with uid: String, from: Date, to: Date, completion: @escaping ([Bill]) -> ()){
         let ref = FIRDatabase.database().reference().child("bills").child(uid)
@@ -345,9 +356,52 @@ extension FIRDatabase {
         guard let uid = DefaultUser.currentUser.uid else {return}
         let ref = FIRDatabase.database().reference().child("bills").child(uid).child(id)
         ref.removeValue { (err, _) in
-            print(err)
+            print("Failed to remove the bill: ", err ?? "no error message.")
         }
         completion()
+    }
+    
+    static func fetchAssets(completion: @escaping ([Asset])->()){
+        guard let uid = DefaultUser.currentUser.uid else {return}
+        let ref = FIRDatabase.database().reference().child("assets").child(uid)
+        
+        ref.observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            var assetsArray : [Asset] = []
+            
+            let assets = snapshot.value as! [String: Any]
+            assets.forEach({ (key, value) in
+                
+                let dictionary = value as! [String: Any]
+                
+                let asset = Asset(id: key, dictionary: dictionary)
+                assetsArray.append(asset)
+                
+                })
+            
+            completion(assetsArray)
+        }) { (err) in
+            print("Failed to fetch assets:", err)
+        }
+    }
+    
+    static func fetchAsset(with id: String, completion: @escaping (Asset)->()){
+        guard let uid = DefaultUser.currentUser.uid else {return}
+        let ref = FIRDatabase.database().reference().child("assets").child(uid).child(id)
+        ref.observeSingleEvent(of: .value, with: { (snapshot) in
+
+            let assets = snapshot.value as! [String: Any]
+            assets.forEach({ (key, value) in
+                
+                let dictionary = value as! [String: Any]
+                
+                let asset = Asset(id: key, dictionary: dictionary)
+                completion(asset)
+            })
+            
+        }) { (err) in
+            print("Failed to fetch assets:", err)
+        }
     }
     
     static func createAssetsOnDB(completion: @escaping ()->()){

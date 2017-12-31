@@ -30,10 +30,64 @@ class BillsController: UITableViewController {
     
     override func viewDidLoad() {
         self.fetchBills()
+        
+        
+        setupLoadingBar()
+        
+        
         view.backgroundColor = UIColor.currentColorScheme[2]
         tableView.separatorColor = UIColor.clear
         tableView.register(BillTableViewCell.self, forCellReuseIdentifier: cellId)
+        
     }
+    
+
+    
+    let shapeLayer = CAShapeLayer()
+    fileprivate func setupLoadingBar(){
+        let aPath = UIBezierPath()
+        
+        aPath.move(to: CGPoint(x: 0, y: 2))
+        aPath.addLine(to: CGPoint(x: view.frame.width, y: 2))
+        
+        aPath.close()
+        shapeLayer.path = aPath.cgPath
+        
+        shapeLayer.strokeColor = UIColor.currentColorScheme[6].cgColor
+        shapeLayer.lineWidth = 3
+        shapeLayer.strokeEnd = 0
+        
+        tableView.layer.addSublayer(shapeLayer)
+        tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap)))
+        
+    }
+    
+    fileprivate func animateBar(fromValue: Float, toValue: Float, duration: Double, speed: Float) {
+        let basicAnimation = CABasicAnimation(keyPath: "strokeEnd")
+        
+        basicAnimation.fromValue = fromValue
+        basicAnimation.toValue = toValue
+        basicAnimation.duration = duration
+        basicAnimation.isRemovedOnCompletion = false
+        basicAnimation.fillMode = kCAFillModeForwards
+        basicAnimation.speed = speed
+        shapeLayer.add(basicAnimation, forKey: "urSoBasic")
+    }
+    
+    
+    
+    @objc private func handleTap(){
+        print("TAP")
+//        beginDownload()
+//        animateBar(fromValue: 0, toValue: 1, duration: 1)
+        
+    }
+    
+    private func beginDownload() {
+        print("Attempting to download file")
+    }
+    
+    
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
@@ -51,9 +105,6 @@ class BillsController: UITableViewController {
             
         }
     }
-    
-
-    
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return bills.count
@@ -84,7 +135,8 @@ class BillsController: UITableViewController {
         
         for category in (self.homeControllerRef?.categories)! {
             if category.id == withId{
-                return category.assetName!
+                guard let assetName = category.asset?.assetName else {return ""}
+                return assetName
             }
         }
         return ""
@@ -92,12 +144,19 @@ class BillsController: UITableViewController {
     
     func fetchBills(){
         
+        self.animateBar(fromValue: 0.0, toValue: 0.45, duration: 1, speed: 0.5)
+        
+        print("fetching bills after 4 seconds")
         guard let uid = self.uid else {return}
+        
         
         LibraryAPI.sharedInstance.fetchBills(with: uid) { (bills) in
             self.bills = bills
+            
+            self.animateBar(fromValue: 0.45, toValue: 1, duration: 1, speed: 1)
             self.tableView.reloadData()
         }
+        
     }
     
     

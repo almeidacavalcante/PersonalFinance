@@ -20,6 +20,14 @@ class BillTableViewCell: UITableViewCell {
         return label
     }()
     
+    let dateLabel : UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor.currentColorScheme[8]
+        label.font = UIFont.boldSystemFont(ofSize: 11)
+        label.text = "2 days ago"
+        return label
+    }()
+    
     let categoryImageView : UIImageView = {
         let iv = UIImageView()
         iv.tintColor = UIColor.currentColorScheme[8]
@@ -44,7 +52,10 @@ class BillTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+
         self.addSubview(categoryImageView)
+
         self.categoryImageView.anchor(top: topAnchor, left: leftAnchor, botton: nil, right: nil, paddingTop: 12.5, paddingLeft: 16, paddingBottom: 0, paddingRight: 0, width: 20, height: 20)
     }
     
@@ -60,12 +71,17 @@ class BillTableViewCell: UITableViewCell {
     func setupBill(){
         valueLabel.text = "$" + (bill?.value.description)!
         noteLabel.text = bill?.note
+        let date : NSDate = bill?.date as! NSDate
         
+        dateLabel.text = date.timeAgoDisplay()
+        
+        self.addSubview(dateLabel)
         self.addSubview(valueLabel)
         self.addSubview(noteLabel)
         
+        self.dateLabel.anchor(top: noteLabel.bottomAnchor, left: noteLabel.leftAnchor, botton: nil, right: nil, paddingTop: -7, paddingLeft:0, paddingBottom: 0, paddingRight: 0, width: 200, height: 15)
         valueLabel.anchor(top: topAnchor, left: nil, botton: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 0, paddingBottom: 0, paddingRight: 8, width: 100, height: 37)
-        noteLabel.anchor(top: topAnchor, left: categoryImageView.rightAnchor, botton: nil, right: nil, paddingTop: 8, paddingLeft: 16, paddingBottom: 0, paddingRight: 0, width: 100, height: 37)
+        noteLabel.anchor(top: topAnchor, left: categoryImageView.rightAnchor, botton: nil, right: nil, paddingTop: 0, paddingLeft: 16, paddingBottom: 0, paddingRight: 0, width: 100, height: 37)
         
         categoryImageView.image = UIImage(named: assetName!)?.template()
         layoutIfNeeded()

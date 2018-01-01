@@ -395,8 +395,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         animateOutNoteTextField()
     }
     
-
-    
     func drawACircle() -> CAShapeLayer{
         let circlePath = UIBezierPath(arcCenter: CGPoint(x: 0,y: 0), radius: CGFloat(25), startAngle: CGFloat(0), endAngle:CGFloat(Double.pi * 2), clockwise: true)
         

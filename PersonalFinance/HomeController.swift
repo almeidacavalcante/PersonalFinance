@@ -540,7 +540,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             if let err = err {
                 print("Failed to save post values in DB:", err)
             }
-            
+            self.setHotView()
             print("Successfully saved the post in DB:")
         }
     }
@@ -629,6 +629,14 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         button.addTarget(self, action: #selector(handleAddCategory), for: .touchUpInside)
         return button
     }()
+    
+    let hotView : UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.currentColorScheme[6]
+        view.layer.cornerRadius = 7.5
+        return view
+    }()
+    
     let calendarDayButton : UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "calendar1").template(), for: .normal)
@@ -652,8 +660,27 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     func handleBillsController(){
         let controller = BillsController()
+        self.unsetHotView()
         controller.homeControllerRef = self
         navigationController?.pushViewController(controller, animated: true)
+    }
+    
+    func setHotView(){
+        calendarWeekButton.addSubview(hotView)
+        let numberLabel = UILabel()
+        
+        let text = "1"
+        
+        numberLabel.text = text
+        numberLabel.textColor = .white
+        numberLabel.font = UIFont.systemFont(ofSize: 10)
+        hotView.addSubview(numberLabel)
+        numberLabel.anchor(top: hotView.topAnchor, left: hotView.leftAnchor, botton: nil, right: nil, paddingTop: 2, paddingLeft: 5, paddingBottom: 0, paddingRight: 0, width: 10, height: 10)
+        hotView.anchor(top: calendarWeekButton.topAnchor, left: nil, botton: nil, right: calendarWeekButton.rightAnchor, paddingTop: 0, paddingLeft:0, paddingBottom: 0, paddingRight: 0, width: 15, height: 15)
+    }
+    
+    func unsetHotView(){
+        hotView.removeFromSuperview()
     }
     
     func handleOpenMonthReport(){

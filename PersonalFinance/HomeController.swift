@@ -540,7 +540,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             if let err = err {
                 print("Failed to save post values in DB:", err)
             }
-            self.setHotView()
+            self.setHotView(button: self.calendarWeekButton)
             print("Successfully saved the post in DB:")
         }
     }
@@ -665,8 +665,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         navigationController?.pushViewController(controller, animated: true)
     }
     
-    func setHotView(){
-        calendarWeekButton.addSubview(hotView)
+    func setHotView(button: UIButton){
+        button.addSubview(hotView)
         let numberLabel = UILabel()
         
         let text = "1"
@@ -676,7 +676,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         numberLabel.font = UIFont.systemFont(ofSize: 10)
         hotView.addSubview(numberLabel)
         numberLabel.anchor(top: hotView.topAnchor, left: hotView.leftAnchor, botton: nil, right: nil, paddingTop: 2, paddingLeft: 5, paddingBottom: 0, paddingRight: 0, width: 10, height: 10)
-        hotView.anchor(top: calendarWeekButton.topAnchor, left: nil, botton: nil, right: calendarWeekButton.rightAnchor, paddingTop: 0, paddingLeft:0, paddingBottom: 0, paddingRight: 0, width: 15, height: 15)
+        hotView.anchor(top: button.topAnchor, left: nil, botton: nil, right: button.rightAnchor, paddingTop: 0, paddingLeft:0, paddingBottom: 0, paddingRight: 0, width: 15, height: 15)
     }
     
     func unsetHotView(){

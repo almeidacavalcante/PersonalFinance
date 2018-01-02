@@ -56,9 +56,10 @@ class BillsController: UITableViewController {
         shapeLayer.strokeColor = UIColor.currentColorScheme[6].cgColor
         shapeLayer.lineWidth = 3
         shapeLayer.strokeEnd = 0
-        
+
         tableView.layer.addSublayer(shapeLayer)
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap)))
+
         
     }
     
@@ -163,5 +164,5 @@ class BillsController: UITableViewController {
         return 55
     }
     
-    
+
 }

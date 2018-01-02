@@ -23,7 +23,7 @@ class MyButton: UIButton {
 
 }
 
-class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UITextFieldDelegate, HeaderCellDelegate, CategoryCellDelegate {
+class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UITextFieldDelegate {
     
     let footerContainer : UIView = {
         let container = UIView()
@@ -908,104 +908,23 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         collectionView?.anchor(top: view.topAnchor, left: view.leftAnchor, botton: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 100, paddingRight: 0, width: 0, height: 0)
     }
     
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let unwrappedCategories = self.categories else {return 0}
-        return unwrappedCategories.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        let width = (view.frame.width-2)/3
-        
-        return CGSize(width: width, height: width - 30)
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! CategoryCell
-        
-        
-        let assetName = categories?[indexPath.item].asset?.assetName
-        
-        cell.button.setImage(UIImage(named: assetName!)?.template(), for: .normal)
-        
-        cell.category = categories?[indexPath.item]
-        
-        cell.delegate = self
-        cell.indexPath = indexPath
-        
-        if selectedIndexPath == indexPath {
-            cell.didSelectCategory()
-        }
-        
-        
-        return cell
-    }
-    
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 1
-    }
-    
-    //MARK: DID SELECT CATEGORY
-    
     var selectedCategoryCell : CategoryCell?
     var selectedIndexPath : IndexPath?
     
-    func didSelectCategory(cell: CategoryCell) {
-        resetCategoryCellColor()
-        self.selectedCategoryCell = cell
-        self.selectedIndexPath = cell.indexPath
-        self.setupTitleLabelView()
-        self.setupTitleLabelTransition(title: (selectedCategoryCell?.category?.descriptionContent)!)
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 10, options: .curveEaseInOut, animations: {
-            self.selectedCategoryCell?.backgroundColor = UIColor.currentColorScheme[6]
-        })
-    }
+
     
     fileprivate func resetCategoryCellColor(){
         guard let cell = selectedCategoryCell else {return}
         cell.resetColor()
     }
     
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        let cell = collectionView.cellForItem(at: indexPath) as! CategoryCell
-        cell.indexPath = indexPath
-        
-        if selectedIndexPath == indexPath{
-            self.didDeselectCategory(cell: cell)
-            selectedIndexPath = nil
-        }else{
-            self.didSelectCategory(cell: cell)
-        }
-        
-    }
+
     
     func didDeselectCategory(cell: CategoryCell){
         cell.indexPath = nil
         self.selectedIndexPath = nil
         self.selectedCategoryCell = nil
         cell.resetColor()
-    }
-    
-    //MARK: HEADER
-    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as! HeaderCell
-        
-        
-
-        header.currencyField.delegate = self
-        
-        self.header = header
-        
-        setupAddedNote()
-    
-        return self.header!
     }
     
     
@@ -1016,14 +935,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         infoButton.anchor(top: self.header?.topAnchor, left: self.header?.leftAnchor, botton: nil, right: nil, paddingTop: 8, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         infoButton.alpha = 0
     }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        
-        let screenWidth = view.frame.width
-        return CGSize(width: screenWidth, height: 100)
-    }
-    
-    
+
     //MARK: TextField Delegation
     func textFieldShouldReturn(_ textField: UITextField) -> Bool
     {
@@ -1046,11 +958,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
 
     
-    func didFinishEditing(){
-        guard let header = self.header else {return}
-        self.dismissKeyboard()
-//        header.didFinishEditing()
-    }
+
     
     
     func textFieldDidBeginEditing(_ textField: UITextField) {        
@@ -1112,13 +1020,107 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         titleLabelView.text = ""
         self.navigationItem.titleView = titleLabelView
     }
+}
+
+extension HomeController: HeaderCellDelegate, CategoryCellDelegate {
+    
+    //MARK: - Protocol`s functions -
+    func didSelectCategory(cell: CategoryCell) {
+        resetCategoryCellColor()
+        self.selectedCategoryCell = cell
+        self.selectedIndexPath = cell.indexPath
+        self.setupTitleLabelView()
+        self.setupTitleLabelTransition(title: (selectedCategoryCell?.category?.descriptionContent)!)
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 10, options: .curveEaseInOut, animations: {
+            self.selectedCategoryCell?.backgroundColor = UIColor.currentColorScheme[6]
+        })
+    }
+    
+    func didFinishEditing(){
+        guard let header = self.header else {return}
+        self.dismissKeyboard()
+    }
+    
+    
+    
+    //MARK: - Collection View functions -
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        
+        let screenWidth = view.frame.width
+        return CGSize(width: screenWidth, height: 100)
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        guard let unwrappedCategories = self.categories else {return 0}
+        return unwrappedCategories.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        let width = (view.frame.width-2)/3
+        
+        return CGSize(width: width, height: width - 30)
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! CategoryCell
+        
+        let assetName = categories?[indexPath.item].asset?.assetName
+        
+        cell.button.setImage(UIImage(named: assetName!)?.template(), for: .normal)
+        
+        cell.category = categories?[indexPath.item]
+        
+        cell.delegate = self
+        cell.indexPath = indexPath
+        
+        if selectedIndexPath == indexPath {
+            cell.didSelectCategory()
+        }
+        
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
+    }
+
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let cell = collectionView.cellForItem(at: indexPath) as! CategoryCell
+        cell.indexPath = indexPath
+        
+        if selectedIndexPath == indexPath{
+            self.didDeselectCategory(cell: cell)
+            selectedIndexPath = nil
+        }else{
+            self.didSelectCategory(cell: cell)
+        }
+        
+    }
+    
+    //MARK: HEADER
+    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as! HeaderCell
+        
+        header.currencyField.delegate = self
+        self.header = header
+        setupAddedNote()
+        return self.header!
+    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-
 }
+
+
 
 		

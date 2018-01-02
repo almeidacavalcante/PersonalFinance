@@ -425,7 +425,6 @@ extension FIRDatabase {
             ("dollar", 0),
             ("dollar2", 0),
             ("hugby", 0),
-            ("hugby2", 0),
             ("bus", 0),
             ("phone", 0),
             ("cam", 0),

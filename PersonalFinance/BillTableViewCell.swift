@@ -22,7 +22,7 @@ class BillTableViewCell: UITableViewCell {
     
     let dateLabel : UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.currentColorScheme[8]
+        label.textColor = UIColor.currentColorScheme[15]
         label.font = UIFont.boldSystemFont(ofSize: 11)
         label.text = "2 days ago"
         return label
@@ -64,7 +64,7 @@ class BillTableViewCell: UITableViewCell {
         
         selectionStyle = .none
         contentView.frame = UIEdgeInsetsInsetRect(contentView.frame, UIEdgeInsetsMake(0, 0, 1, 0))
-        contentView.backgroundColor = UIColor.currentColorScheme[1]
+        contentView.backgroundColor = UIColor.currentColorScheme[17]
 
     }
     

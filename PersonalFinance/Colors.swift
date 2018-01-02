@@ -32,7 +32,7 @@ extension UIColor {
         get{
             var scheme = [UIColor]()
             scheme.append(UIColor(rgb: 0x01899B)) // [0]
-            scheme.append(UIColor(rgb: 0x028090)) // [1]
+            scheme.append(UIColor(rgb: 0x028090)) // [1] teal
             scheme.append(UIColor(rgb: 0x017382)) // [2]
             scheme.append(UIColor(rgb: 0xF0F3BD)) // [3] Pale Spring Bud
             scheme.append(UIColor(rgb: 0x0197A8)) // [4] Blue Munsell
@@ -45,7 +45,12 @@ extension UIColor {
             scheme.append(UIColor(rgb: 0x2CCD98)) // [11] Mountain Meadow (greenish)
             scheme.append(UIColor(rgb: 0x026976)) // [12] Skobeloff (darker blue)
             scheme.append(UIColor(rgb: 0x540B0E)) // [13] Red-brown
-            scheme.append(UIColor(rgb: 0x028090)) // [14] METALLIC SEAWEED (dark blue)
+            scheme.append(UIColor(rgb: 0x028090)) // [14] METALLIC SEAWEED (dark blue) 1D96C6
+            scheme.append(UIColor(rgb: 0x055155)) // [15] Dark imperial blue 018191
+            scheme.append(UIColor(rgb: 0x018191)) // [16] Dark Cyan 0391A3
+            scheme.append(UIColor(rgb: 0x038899)) // [17] Verdian Green
+            
+            
             
             
             scheme.append(UIColor.rgb(red: 250, green: 240, blue: 214))

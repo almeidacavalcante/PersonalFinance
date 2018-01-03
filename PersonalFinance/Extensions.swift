@@ -408,7 +408,7 @@ extension FIRDatabase {
         guard let uid = DefaultUser.currentUser.uid else {return}
         let ref = FIRDatabase.database().reference().child("assets").child(uid)
         
-        var availableIcons : [(key: String, value: Int)] = [
+        let availableIcons : [(key: String, value: Int)] = [
             ("bandage", 0),
             ("comment", 0),
             ("gas", 0),
@@ -444,8 +444,6 @@ extension FIRDatabase {
                 print("Successfully created a ASSET")
             })
         }
- 
     }
-  
 }
 

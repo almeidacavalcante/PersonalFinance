@@ -12,18 +12,9 @@ import FirebaseAuth
 import FirebaseDatabase
 import FirebaseStorage
 
-class MyButton: UIButton {
-
-    override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        let relativeFrame = self.bounds
-        let hitTestEdgeInsets = UIEdgeInsetsMake(-25, -25, -25, -25)
-        let hitFrame = UIEdgeInsetsInsetRect(relativeFrame, hitTestEdgeInsets)
-        return hitFrame.contains(point)
-    }
-
-}
-
-class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UITextFieldDelegate {
+class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout{
+    
+    //MARK: - Controller Properties -
     
     let footerContainer : UIView = {
         let container = UIView()
@@ -53,32 +44,179 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         return button
     }()
     
-    
-    
+    var tempCategories : [Category]? = []
+
     var header : HeaderCell?
     
-    //MODEL: Separate this in a model class
     var categories : [Category]?
     var assets : [Asset]?
 
-    
     let cellId = "cellId"
     let headerId = "headerId"
     let footerId = "footerId"
     
+    var addCategoryController : AddCategoryController?
+    var monthReportController : MonthReportController?
+    
+    var heightConstraint : NSLayoutConstraint?
+    var trailingConstraint : NSLayoutConstraint?
+    var headerHeightConstraint : NSLayoutConstraint?
+    
+    let horizontalOverlay = UIView()
+    
+    let noteTextField : TextField = {
+        let tf = TextField()
+        tf.font = UIFont.boldSystemFont(ofSize: 16)
+        tf.textAlignment = .left
+        tf.contentVerticalAlignment = .center
+        tf.placeholder = "Enter some note"
+        tf.textColor = UIColor.currentColorScheme[9]
+        return tf
+    }()
+    
+    //MARK: MENU
+    let addCategoryButton : UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "add2").template(), for: .normal)
+        button.tintColor = UIColor.currentColorScheme[3]
+        button.addTarget(self, action: #selector(handleAddCategory), for: .touchUpInside)
+        return button
+    }()
+    
+    let hotView : UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.currentColorScheme[6]
+        view.layer.cornerRadius = 7.5
+        return view
+    }()
+    
+    let calendarDayButton : UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "calendar1").template(), for: .normal)
+        button.tintColor = UIColor.currentColorScheme[3]
+        return button
+    }()
+    let calendarWeekButton : UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "calendar7-").template(), for: .normal)
+        button.tintColor = UIColor.currentColorScheme[3]
+        button.addTarget(self, action: #selector(handleBillsController), for: .touchUpInside)
+        return button
+    }()
+    let calendarMonthButton : UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "calendar30").template(), for: .normal)
+        button.tintColor = UIColor.currentColorScheme[3]
+        //        button.addTarget(self, action: #selector(handleOpenMonthReport), for: .touchUpInside)
+        return button
+    }()
+    
+    
+    let infoButton : UIButton = {
+        let button = UIButton(type: .system)
+        button.contentEdgeInsets = UIEdgeInsetsMake(15, 15, 15, 15)
+        //        button.backgroundColor = .black
+        button.addTarget(self, action: #selector(handleInfo), for: .touchUpInside)
+        return button
+    }()
+    
+    
+    let infoOverlay : UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.currentColorScheme[3]
+        return view
+    }()
+    var infoWidthConstraint : NSLayoutConstraint?
+    
+    
+    
+    
+    let closeButton : UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "x").template(), for: .normal)
+        button.tintColor = UIColor.currentColorScheme[9]
+        button.addTarget(self, action: #selector(handleClose), for: .touchUpInside)
+        return button
+    }()
+    
+    let infoLabel : UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor.currentColorScheme[9]
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        
+        
+        return label
+    }()
+    
+    var separatorView : UIView?
+    
+    var submitButton : UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("ENTER", for: .normal)
+        button.setTitleColor(UIColor.currentColorScheme[2], for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        button.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
+        return button
+    }()
+    
+    
+    //TODO: Create the logic to not show the "" note.
+    var lastNote = ""
+    
+    
+    lazy var openMenuBarButton : UIBarButtonItem = {
+        let barButton = UIBarButtonItem()
+        
+        let icon = UIImage(named: "menu")?.template()
+        
+        guard let iconWidth = icon?.size.width else {return barButton}
+        
+        let iconSize = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: iconWidth, height: iconWidth))
+        
+        let size = CGRect(x: 0, y: 0, width: 50, height: 50)
+        
+        let iconButton = UIButton()
+        
+        iconButton.addTarget(self, action: #selector(handleManu), for: .touchUpInside)
+        iconButton.frame = size
+        iconButton.imageView?.frame = iconSize
+        iconButton.setImage(icon, for: .normal)
+        iconButton.imageEdgeInsets = UIEdgeInsetsMake(0, -15, 0, 0)
+        
+        barButton.customView = iconButton
+        
+        return barButton
+    }()
+    
+    var menu : UIView = {
+        let menu = UIView()
+        menu.backgroundColor = UIColor.currentColorScheme[8]
+        return menu
+    }()
+    
+    
+    
+    var menuWidthConstraint : NSLayoutConstraint?
+    var isMenuOn = false
+
+    var menusXPositionConstraints : [NSLayoutConstraint] = []
+    var menuIndex = 0
+    
+    var selectedCategoryCell : CategoryCell?
+    var selectedIndexPath : IndexPath?
+    
+    let blackView = UIView()
+    
+    
+    //MARK: - Controller Functions -
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-//        FIRDatabase.createAssetsOnDB {
-//
-//        }
         
         collectionView?.keyboardDismissMode = .interactive
 
         fetchCategories()
-        
-        
-        //134,172,151
+
         view.backgroundColor = UIColor.currentColorScheme[3]
         
         self.handleLogin()
@@ -86,18 +224,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         setupNavigationBar()
         setupContainerView()
         setupBlackView()
-        
+    }
 
-    }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle{
-        return .lightContent
-    }
-    
-    var tempCategories : [Category]? = []
-    
     func fetchCategories(){
-        
         FIRDatabase.fetchAssets { (assets) in
             self.assets = assets
             LibraryAPI.sharedInstance.fetchCategories { (categories) in
@@ -118,18 +247,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             }
         }
     }
-    
-    func handleInsert(){
-        self.showOverlayScreen()
-        self.saveTheBill()
-    }
-    
-    func handleNote(){
-        self.noteButton.isEnabled = false
-        
-        self.showNoteOverlay()
-    }
-    
+
     func showNoteOverlay(){
 
         horizontalOverlay.backgroundColor = UIColor.currentColorScheme[3]
@@ -149,23 +267,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         animateNoteTextField()
     }
     
-    let noteTextField : TextField = {
-        let tf = TextField()
-        tf.font = UIFont.boldSystemFont(ofSize: 16)
-        tf.textAlignment = .left
-        tf.contentVerticalAlignment = .center
-        tf.placeholder = "Enter some note"
-        tf.textColor = UIColor.currentColorScheme[9]
-        return tf
-    }()
-    
-    
-    
-    var heightConstraint : NSLayoutConstraint?
-    var trailingConstraint : NSLayoutConstraint?
-    var headerHeightConstraint : NSLayoutConstraint?
-    
-    let horizontalOverlay = UIView()
+
     
     func animateNoteTextField(){
         UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
@@ -225,43 +327,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
     
-    let infoButton : UIButton = {
-        let button = UIButton(type: .system)
-        button.contentEdgeInsets = UIEdgeInsetsMake(15, 15, 15, 15)
-//        button.backgroundColor = .black
-        button.addTarget(self, action: #selector(handleInfo), for: .touchUpInside)
-        return button
-    }()
     
-    
-    let infoOverlay : UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.currentColorScheme[3]
-        return view
-    }()
-    var infoWidthConstraint : NSLayoutConstraint?
-    
-    
-    func handleInfo(){
-        view.addSubview(infoOverlay)
-        infoOverlay.anchor(top: navigationController?.navigationBar.bottomAnchor, left: header?.leftAnchor, botton: nil, right: nil, paddingTop:1, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
-        
-        self.view.layoutIfNeeded()
-        
-        animateInfoIn()
-    }
-    
-    let closeButton : UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "x").template(), for: .normal)
-        button.tintColor = UIColor.currentColorScheme[9]
-        button.addTarget(self, action: #selector(handleClose), for: .touchUpInside)
-        return button
-    }()
-    
-    func handleClose(){
-        animateInfoOut()
-    }
+
     
     func animateInfoOut(){
         
@@ -303,15 +370,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             print("INFO ANIMATED")
         }
     }
-    
-    let infoLabel : UILabel = {
-        let label = UILabel()
-        label.textColor = UIColor.currentColorScheme[9]
-        label.font = UIFont.boldSystemFont(ofSize: 14)
-        
-        
-        return label
-    }()
+
     
     func animateLabelAndCloseButton(){
         
@@ -352,16 +411,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
 
-    var separatorView : UIView?
-    
-    var submitButton : UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("ENTER", for: .normal)
-        button.setTitleColor(UIColor.currentColorScheme[2], for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
-        button.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
-        return button
-    }()
+
     
     func setupNoteTextField(){
         view.addSubview(noteTextField)
@@ -381,19 +431,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         view.layoutIfNeeded()
     }
     
-    
-    var lastNote = ""
-    
-    func handleSend(){
-        print("Handle Send.")
-        
-        if let text = noteTextField.text {
-            lastNote = text
-        }
-        noteTextField.text = ""
-        noteTextField.removeFromSuperview()
-        animateOutNoteTextField()
-    }
+
     
     func drawACircle() -> CAShapeLayer{
         let circlePath = UIBezierPath(arcCenter: CGPoint(x: 0,y: 0), radius: CGFloat(25), startAngle: CGFloat(0), endAngle:CGFloat(Double.pi * 2), clockwise: true)
@@ -410,6 +448,28 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         return shapeLayer
     }
     
+    fileprivate func animateCircle(circle: UIView, overlay: UIView) {
+        UIView.animate(withDuration: 0.3, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
+            circle.frame.origin.y += 20
+            circle.alpha = 1
+        }) { (true) in
+            UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseIn, animations: {
+                
+                let rate = self.view.frame.height*3/circle.frame.width
+                
+                circle.transform = CGAffineTransform(scaleX: rate, y: rate)
+                circle.alpha = 0
+                overlay.alpha = 0
+                self.resetScreen()
+                
+            }) { (true) in
+                circle.removeFromSuperview()
+                overlay.removeFromSuperview()
+                
+            }
+        }
+    }
+    
     func showOverlayScreen(){
         let overlay = UIView()
         let circle = UIView()
@@ -417,7 +477,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         let width = CGFloat(50)
         
         circle.layer.cornerRadius = width/2
-        circle.backgroundColor = UIColor.currentColorScheme[5]
+        circle.backgroundColor = UIColor.currentColorScheme[12]
         circle.alpha = 0
         circle.frame.origin.x += 25
         circle.frame.origin.y += 25
@@ -433,7 +493,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         let rect = CGRect(x: overlay.layer.position.x, y: overlay.layer.position.y, width: self.view.frame.width, height: self.view.frame.height-footerContainer.frame.height)
         
-        //circle.mask(withRect: rect, inverse: true)
         overlay.mask(withRect: rect)
 
         
@@ -445,22 +504,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             overlay.frame.origin.x += (self.view.frame.width)
             
         }) { (true) in
-            UIView.animate(withDuration: 0.3, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
-               circle.frame.origin.y += 20
-               circle.alpha = 1
-            }) { (true) in
-                UIView.animate(withDuration: 0.2, delay: 0, options: UIViewAnimationOptions.curveEaseIn, animations: {
-
-                    let rate = self.view.frame.height*3/circle.frame.width
-                    
-                    circle.transform = CGAffineTransform(scaleX: rate, y: rate)
-                    
-                }) { (true) in
-                    circle.removeFromSuperview()
-                    overlay.removeFromSuperview()
-                    self.resetScreen()
-                }
-            }
+            self.animateCircle(circle: circle, overlay: overlay)
         }
     }
     
@@ -471,26 +515,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         selectedCategoryCell = nil
         setupTitleLabelTransition(title: "")
     }
+
     
-    func handleLogin(){
-        
-        let email = "bill@bill.com"
-        let password = "bill123"
-        
-        FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, err) in
-            
-            if let err = err {
-                print("Failed to log beck in with email: ", err)
-                return
-            }
-            
-            print("Successfully logged in with the user id: ", user?.uid ?? "")
-        })
-    }
-    
-    func handleLogout(){
-        print("Logging out")
-    }
+
     
     
     fileprivate func insertCategory(imageUrl: String){
@@ -520,7 +547,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
 
         let value = stringToPlainDouble(rawValue: rawValue)
         
-        //MARK: - Use the Adapter (Couping code)
         guard let uid = DefaultUser.currentUser.uid else {return}
         
         guard let category = selectedCategoryCell?.category else {return}
@@ -543,53 +569,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         }
     }
     
-    lazy var openMenuBarButton : UIBarButtonItem = {
-        let barButton = UIBarButtonItem()
-        
-        let icon = UIImage(named: "menu")?.template()
-        
-        guard let iconWidth = icon?.size.width else {return barButton}
-            
-        let iconSize = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: iconWidth, height: iconWidth))
-        
-        let size = CGRect(x: 0, y: 0, width: 50, height: 50)
-        
-        let iconButton = UIButton()
-            
-        iconButton.addTarget(self, action: #selector(handleManu), for: .touchUpInside)
-        iconButton.frame = size
-        iconButton.imageView?.frame = iconSize
-        iconButton.setImage(icon, for: .normal)
-        iconButton.imageEdgeInsets = UIEdgeInsetsMake(0, -15, 0, 0)
- 
-        barButton.customView = iconButton
     
-        return barButton
-    }()
-    
-    var menu : UIView = {
-        let menu = UIView()
-        menu.backgroundColor = UIColor.currentColorScheme[8]
-        return menu
-    }()
-    
-    func handleManu(){
-        print("Open MENU")
-        view.addSubview(menu)
-        menu.anchor(top: view.topAnchor, left: view.leftAnchor, botton: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        
-        view.layoutIfNeeded()
-        
-        if !isMenuOn {
-            animateMenuIn()
-        }else{
-            animateMenuOut()
-        }
-        
-    }
-    
-    var menuWidthConstraint : NSLayoutConstraint?
-    var isMenuOn = false
     
     func animateMenuIn(){
         
@@ -619,49 +599,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
     }
     
-    //MARK: MENU
-    let addCategoryButton : UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "add2").template(), for: .normal)
-        button.tintColor = UIColor.currentColorScheme[3]
-        button.addTarget(self, action: #selector(handleAddCategory), for: .touchUpInside)
-        return button
-    }()
+
     
-    let hotView : UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.currentColorScheme[6]
-        view.layer.cornerRadius = 7.5
-        return view
-    }()
-    
-    let calendarDayButton : UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "calendar1").template(), for: .normal)
-        button.tintColor = UIColor.currentColorScheme[3]
-        return button
-    }()
-    let calendarWeekButton : UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "calendar7-").template(), for: .normal)
-        button.tintColor = UIColor.currentColorScheme[3]
-        button.addTarget(self, action: #selector(handleBillsController), for: .touchUpInside)
-        return button
-    }()
-    let calendarMonthButton : UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "calendar30").template(), for: .normal)
-        button.tintColor = UIColor.currentColorScheme[3]
-//        button.addTarget(self, action: #selector(handleOpenMonthReport), for: .touchUpInside)
-        return button
-    }()
-    
-    func handleBillsController(){
-        let controller = BillsController()
-        self.unsetHotView()
-        controller.homeControllerRef = self
-        navigationController?.pushViewController(controller, animated: true)
-    }
+
     
     func setHotView(button: UIButton){
         button.addSubview(hotView)
@@ -681,21 +621,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         hotView.removeFromSuperview()
     }
     
-    func handleOpenMonthReport(){
-//        guard let controller = monthReportController else {
-//            let layout = UICollectionViewFlowLayout()
-//            self.monthReportController = MonthReportController(collectionViewLayout: layout)
-//            self.monthReportController?.homeControllerRef = self
-//            navigationController?.pushViewController(self.monthReportController!, animated: true)
-//            return
-//        }
-        
-        let layout = UICollectionViewFlowLayout()
-        let controller = MonthReportController(collectionViewLayout: layout)
-        controller.homeControllerRef = self
-        
-        navigationController?.pushViewController(controller, animated: true)
-    }
+
     
     func animateMenusIn(){
         animateMenusIconsIndividuallyIn(buttons: [addCategoryButton,calendarDayButton,calendarWeekButton, calendarMonthButton], yOffset: 30, delay: 0.0)
@@ -705,7 +631,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         animateMenusIconsIndividuallyOut(buttons: [addCategoryButton,calendarDayButton,calendarWeekButton, calendarMonthButton], delay: 0.0)
     }
     
-    var menusXPositionConstraints : [NSLayoutConstraint] = []
+    
     
     func animateMenusIconsIndividuallyIn(buttons: [UIButton], yOffset: CGFloat, delay: TimeInterval){
         
@@ -747,7 +673,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
 
     }
     
-    var menuIndex = 0
+    
     
     func animateMenusIconsIndividuallyOut(buttons: [UIButton], delay: TimeInterval){
         
@@ -842,22 +768,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         })
     }
     
-    
-    var addCategoryController : AddCategoryController?
-    var monthReportController : MonthReportController?
-    
-    
-    func handleAddCategory(){
-        guard let controller = addCategoryController else {
-            let layout = UICollectionViewFlowLayout()
-            self.addCategoryController = AddCategoryController(collectionViewLayout: layout)
-            self.addCategoryController?.homeControllerRef = self
-            navigationController?.pushViewController(self.addCategoryController!, animated: true)
-            return
-        }
-        navigationController?.pushViewController(controller, animated: true)
-    }
-    
     func setupNavigationBar(){
         navigationController?.navigationBar.barTintColor = UIColor.currentColorScheme[1]
         setStatusBarBackgroundColor(color: UIColor.currentColorScheme[2])
@@ -883,9 +793,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         view.addSubview(footerContainer)
         footerContainer.addSubview(finishButton)
         finishButton.addSubview(noteButton)
-        
-        
-        
+
         footerContainer.anchor(top: collectionView?.bottomAnchor, left: view.leftAnchor, botton: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         
         finishButton.anchor(top: footerContainer.topAnchor, left: footerContainer.leftAnchor, botton: footerContainer.bottomAnchor, right: footerContainer.rightAnchor, paddingTop: 1, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
@@ -907,27 +815,19 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
         collectionView?.anchor(top: view.topAnchor, left: view.leftAnchor, botton: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 100, paddingRight: 0, width: 0, height: 0)
     }
-    
-    var selectedCategoryCell : CategoryCell?
-    var selectedIndexPath : IndexPath?
-    
 
-    
     fileprivate func resetCategoryCellColor(){
         guard let cell = selectedCategoryCell else {return}
         cell.resetColor()
     }
-    
 
-    
     func didDeselectCategory(cell: CategoryCell){
         cell.indexPath = nil
         self.selectedIndexPath = nil
         self.selectedCategoryCell = nil
         cell.resetColor()
     }
-    
-    
+
     func setupAddedNote(){
         infoButton.setImage(#imageLiteral(resourceName: "info").template(), for: .normal)
         
@@ -936,14 +836,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         infoButton.alpha = 0
     }
 
-    //MARK: TextField Delegation
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool
-    {
-        textField.resignFirstResponder()
-        return true;
-    }
-    
-    let blackView = UIView()
     func setupBlackView(){
         let label = UILabel()
         label.text = "Dismiss keyboard"
@@ -957,44 +849,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         blackView.addGestureRecognizer(gestureRec)
     }
 
-    
 
-    
-    
-    func textFieldDidBeginEditing(_ textField: UITextField) {        
-        
-        view.addSubview(blackView)
-        
-        
-        blackView.anchor(top: textField.bottomAnchor, left: view.leftAnchor, botton: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        
 
-        
-        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseIn, animations: {
-            
-            self.header?.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 100)
-            
-            self.blackView.backgroundColor = UIColor.init(white: 0, alpha: 0.5)
-
-        }) { (_) in
-
-        }
-        
-    }
-    
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseIn, animations: {
-            
-            self.blackView.backgroundColor = UIColor(white: 1, alpha: 0)
-            
-            self.blackView.removeFromSuperview()
-            
-        }) { (_) in
-            print("animated")
-        }
-    }
 
     fileprivate func setupTitleLabelTransition(title: String){
         let titleAnimation = CATransition()
@@ -1002,10 +858,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         titleAnimation.type = kCATransitionFade
         titleAnimation.subtype = kCATransitionFromTop
         titleAnimation.timingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionEaseInEaseOut)
-        
         self.navigationItem.titleView!.layer.add(titleAnimation, forKey: "changeTitle")
         (self.navigationItem.titleView as! UILabel).text = title
-        
         // I added this to autosize the title after setting new text
         (self.navigationItem.titleView as! UILabel).sizeToFit()
     }
@@ -1020,11 +874,126 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         titleLabelView.text = ""
         self.navigationItem.titleView = titleLabelView
     }
+    
+    //MARK: - Handle Functions -
+    
+    func handleInsert(){
+        self.showOverlayScreen()
+        self.saveTheBill()
+    }
+    
+    func handleNote(){
+        self.noteButton.isEnabled = false
+        
+        self.showNoteOverlay()
+    }
+    
+    func handleClose(){
+        animateInfoOut()
+    }
+    
+    func handleInfo(){
+        view.addSubview(infoOverlay)
+        infoOverlay.anchor(top: navigationController?.navigationBar.bottomAnchor, left: header?.leftAnchor, botton: nil, right: nil, paddingTop:1, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
+        
+        self.view.layoutIfNeeded()
+        
+        animateInfoIn()
+    }
+    
+    func handleSend(){
+        print("Handle Send.")
+        
+        if let text = noteTextField.text {
+            lastNote = text
+        }
+        noteTextField.text = ""
+        noteTextField.removeFromSuperview()
+        animateOutNoteTextField()
+    }
+    
+    func handleLogin(){
+        
+        let email = "bill@bill.com"
+        let password = "bill123"
+        
+        FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, err) in
+            
+            if let err = err {
+                print("Failed to log beck in with email: ", err)
+                return
+            }
+            
+            print("Successfully logged in with the user id: ", user?.uid ?? "")
+        })
+    }
+    
+    func handleLogout(){
+        print("Logging out")
+    }
+    
+    func handleManu(){
+        print("Open MENU")
+        view.addSubview(menu)
+        menu.anchor(top: view.topAnchor, left: view.leftAnchor, botton: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        
+        view.layoutIfNeeded()
+        
+        if !isMenuOn {
+            animateMenuIn()
+        }else{
+            animateMenuOut()
+        }
+        
+    }
+    
+    func handleBillsController(){
+        let controller = BillsController()
+        self.unsetHotView()
+        controller.homeControllerRef = self
+        navigationController?.pushViewController(controller, animated: true)
+    }
+    
+    func handleOpenMonthReport(){
+        //        guard let controller = monthReportController else {
+        //            let layout = UICollectionViewFlowLayout()
+        //            self.monthReportController = MonthReportController(collectionViewLayout: layout)
+        //            self.monthReportController?.homeControllerRef = self
+        //            navigationController?.pushViewController(self.monthReportController!, animated: true)
+        //            return
+        //        }
+        
+        let layout = UICollectionViewFlowLayout()
+        let controller = MonthReportController(collectionViewLayout: layout)
+        controller.homeControllerRef = self
+        
+        navigationController?.pushViewController(controller, animated: true)
+    }
+    
+    func handleAddCategory(){
+        guard let controller = addCategoryController else {
+            let layout = UICollectionViewFlowLayout()
+            self.addCategoryController = AddCategoryController(collectionViewLayout: layout)
+            self.addCategoryController?.homeControllerRef = self
+            navigationController?.pushViewController(self.addCategoryController!, animated: true)
+            return
+        }
+        navigationController?.pushViewController(controller, animated: true)
+    }
+    
+    //MARK: -
 }
 
-extension HomeController: HeaderCellDelegate, CategoryCellDelegate {
+extension HomeController: HeaderCellDelegate, CategoryCellDelegate, UITextFieldDelegate {
     
-    //MARK: - Protocol`s functions -
+    //MARK: - Overriden function -
+    override var preferredStatusBarStyle: UIStatusBarStyle{
+        return .lightContent
+    }
+    
+    
+    
+    //MARK: - Protocol Functions -
     func didSelectCategory(cell: CategoryCell) {
         resetCategoryCellColor()
         self.selectedCategoryCell = cell
@@ -1040,6 +1009,35 @@ extension HomeController: HeaderCellDelegate, CategoryCellDelegate {
         guard let header = self.header else {return}
         self.dismissKeyboard()
     }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        view.addSubview(blackView)
+        blackView.anchor(top: textField.bottomAnchor, left: view.leftAnchor, botton: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseIn, animations: {
+            self.header?.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 100)
+            self.blackView.backgroundColor = UIColor.init(white: 0, alpha: 0.5)
+            
+        }) { (err) in
+            print("Failed to begin editing: ", err )
+        }
+    }
+    
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: .curveEaseIn, animations: {
+            self.blackView.backgroundColor = UIColor(white: 1, alpha: 0)
+            self.blackView.removeFromSuperview()
+        }) { (_) in
+            print("animated")
+        }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool{
+        textField.resignFirstResponder()
+        return true;
+    }
+    
+    //MARK: -
     
     
     
@@ -1101,10 +1099,8 @@ extension HomeController: HeaderCellDelegate, CategoryCellDelegate {
         }else{
             self.didSelectCategory(cell: cell)
         }
-        
     }
     
-    //MARK: HEADER
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: headerId, for: indexPath) as! HeaderCell

@@ -48,7 +48,7 @@ class CustomButton: UIButton {
             DispatchQueue.main.async {
                 self.setImage(photoImage?.withRenderingMode(.alwaysTemplate), for: .normal)
             }
-            }.resume()
+        }.resume()
     }
 }
 
